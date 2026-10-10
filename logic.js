@@ -608,10 +608,11 @@ function renderDetail(){
           '<div class="exp-menu-wrap">'+
           '<button class="btn p" id="exp-btn">📥 导出</button>'+
           '<div class="exp-dropdown" id="exp-dd">'+
+          '<button class="exp-item" data-exp="mindmap">导出简洁脉络图（PNG）</button>'+
           '<button class="exp-item" data-exp="png">保存图片（PNG 概览）</button>'+
           '<button class="exp-item" data-exp="pdf">打印／另存为 PDF（完整脉络）</button>'+
           '<button class="exp-item" data-exp="md">导出 Markdown</button>'+
-          '<div class="exp-hint">图片展示各路径代表节点；PDF 包含完整脉络与出处。打印时选横向、关闭「页眉和页脚」，目标选「另存为 PDF」。</div>'+ 
+          '<div class="exp-hint">简洁脉络图按路径分组，完整列出前后要素；PDF 包含完整脉络与出处。打印时选横向、关闭「页眉和页脚」，目标选「另存为 PDF」。</div>'+
           '</div></div></div>';
 
   const viewLinks = viewLinksOf();
@@ -787,6 +788,7 @@ function renderDetail(){
     dd.classList.remove("show");
     const kind = x.dataset.exp;
     if(kind === "md") exportMarkdown();
+    else if(kind === "mindmap") exportMindmapPNG();
     else if(kind === "png") exportPNG();
     else if(kind === "pdf") exportPDF();
   }));
@@ -1324,6 +1326,132 @@ function rr(ctx, x, y, w, h, r){
   ctx.arcTo(x, y+h, x, y, r);
   ctx.arcTo(x, y, x+w, y, r);
   ctx.closePath();
+}
+
+/* ================= 导出：简洁脉络图（仅课标与教材要素） ================= */
+function exportMindmapPNG(){
+  const g=el(curEid); if(!g) return;
+  const {u,e}=g, links=viewLinksOf(), ev=mergeEvidences(curEid,links);
+  const targets=ev.directTargets.map(t=>({label:t.dom+" 第"+t.no+"条",text:t.it.text}));
+  const qualities=ev.directQualities.map(q=>({label:q.xueduan+" 学业质量",text:q.text}));
+  const paths=links.map(lk=>{
+    const parts=splitNodes(L[lk.line].nodes,g.uid,curEid);
+    const compactUnitLabel=(unit)=>{
+      const unitNo=CN_NUMS.indexOf(String(unit.unit))+1;
+      return unit.vol+(unitNo>0?unitNo:unit.unit);
+    };
+    const compactItems=(list,kind)=>{
+      const ordered=list.slice().sort((a,b)=>kind==="pre"?nodeOrderKey(b.eid)-nodeOrderKey(a.eid):nodeOrderKey(a.eid)-nodeOrderKey(b.eid));
+      return ordered.map(n=>{
+        const item=el(n.eid); if(!item) return null;
+        return {label:compactUnitLabel(item.u),text:item.e.text};
+      }).filter(Boolean);
+    };
+    return {name:lk.line,pre:compactItems(parts.pre,"pre"),post:compactItems(parts.post,"post")};
+  });
+
+  const W=3000,M=80,contentW=W-2*M,columnGap=40,columnPad=24,columnW=(contentW-columnPad*2-columnGap)/2;
+  const leftX=M+columnPad,rightX=leftX+columnW+columnGap;
+  const F_TITLE='700 52px "Microsoft YaHei",sans-serif';
+  const F_HEAD='700 34px "Microsoft YaHei",sans-serif';
+  const F_LABEL='600 25px "Microsoft YaHei",sans-serif';
+  const F_TEXT='400 30px "Microsoft YaHei",sans-serif';
+  const F_CURRENT='700 38px "Microsoft YaHei",sans-serif';
+  const LINE=38,C_ACCENT="#2f5d50",C_TXT="#1f211c",C_MUTED="#6f6a5f",C_BG="#f6f2ea",C_CARD="#fffdf8",C_BORDER="#ded8cc";
+  const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");
+  ctx.textBaseline="top";
+  const wrap=(text,maxW,font)=>{
+    ctx.font=font;const lines=[];
+    for(const part of String(text).split("\n")){
+      let line="";
+      for(const ch of part){
+        if(line&&ctx.measureText(line+ch).width>maxW){lines.push(line);line=ch;}else line+=ch;
+      }
+      lines.push(line);
+    }
+    return lines;
+  };
+  const measure=(item,width,font=F_TEXT,lineHeight=LINE)=>{
+    ctx.font=F_LABEL;const prefix=item.label+"：",prefixWidth=ctx.measureText(prefix).width;
+    const texts=wrap(item.text,Math.max(20,width-36-prefixWidth),font);
+    return {prefix,prefixWidth,texts,height:16+Math.max(1,texts.length)*lineHeight+14};
+  };
+  const drawCard=(item,x,y,width,accent,font=F_TEXT,lineHeight=LINE,bg=C_CARD,border=C_BORDER)=>{
+    const m=measure(item,width,font,lineHeight);
+    rr(ctx,x,y,width,m.height,12);ctx.fillStyle=bg;ctx.fill();ctx.strokeStyle=border;ctx.lineWidth=2;ctx.stroke();
+    const ty=y+14;
+    ctx.fillStyle=accent||C_ACCENT;ctx.font=F_LABEL;ctx.fillText(m.prefix,x+18,ty);
+    ctx.fillStyle=C_TXT;ctx.font=font;
+    for(let i=0;i<m.texts.length;i++)ctx.fillText(m.texts[i],x+18+m.prefixWidth,ty+i*lineHeight);
+    return m.height;
+  };
+  const stackHeight=(items,width)=>items.reduce((sum,item)=>sum+measure(item,width).height+14,0);
+  const drawStack=(items,x,y,width)=>{let cy=y;for(const item of items)cy+=drawCard(item,x,cy,width,C_ACCENT)+14;};
+  const listHeight=(items,width)=>items.reduce((sum,item)=>sum+measure(item,width).height+3,0);
+  const drawList=(items,x,y,width)=>{
+    if(!items.length){ctx.fillStyle=C_MUTED;ctx.font=F_LABEL;ctx.fillText("暂无节点",x+12,y+12);return 50;}
+    let cy=y;
+    for(const item of items){
+      const m=measure(item,width);const ty=cy+9;
+      ctx.fillStyle=C_ACCENT;ctx.font=F_LABEL;ctx.fillText(m.prefix,x+8,ty);
+      ctx.fillStyle=C_TXT;ctx.font=F_TEXT;
+      for(let i=0;i<m.texts.length;i++)ctx.fillText(m.texts[i],x+8+m.prefixWidth,ty+i*LINE);
+      cy+=m.height;
+      ctx.strokeStyle=C_BORDER;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+8,cy);ctx.lineTo(x+width-8,cy);ctx.stroke();
+      cy+=3;
+    }
+    return cy-y;
+  };
+  const standardCols=[{title:"学段目标",items:targets},{title:"学业质量",items:qualities}].filter(col=>col.items.length);
+  const stdGap=40,stdW=standardCols.length===1?contentW:(contentW-stdGap)/2;
+  const stdTitleY=140,stdGroupTitleY=188,stdCardsY=224;
+  const stdHeight=standardCols.length?Math.max(...standardCols.map(col=>36+stackHeight(col.items,stdW))):0;
+  const currentY=standardCols.length?stdGroupTitleY+stdHeight+48:140;
+  const currentLines=wrap(e.text,contentW-64,F_CURRENT),currentHeight=72+currentLines.length*46;
+  const pathsY=currentY+currentHeight+36;
+  const pathRows=paths.map(path=>({path,preHeight:listHeight(path.pre,columnW),postHeight:listHeight(path.post,columnW)}))
+    .map(row=>({...row,height:88+Math.max(row.preHeight,row.postHeight)}));
+  const canvasHeight=pathRows.length?pathsY+pathRows.reduce((sum,row)=>sum+row.height+20,0)+M:pathsY+M;
+  canvas.width=W;canvas.height=Math.ceil(canvasHeight);
+  ctx.textBaseline="top";ctx.fillStyle=C_BG;ctx.fillRect(0,0,W,canvas.height);
+
+  ctx.fillStyle=C_ACCENT;ctx.font=F_TITLE;
+  ctx.fillText((D.versions[u.vol]?.name0||u.vol)+" · 第"+u.unit+"单元 · 要素脉络图",M,60);
+  if(standardCols.length){
+    ctx.fillStyle=C_MUTED;ctx.font=F_HEAD;ctx.fillText("课标",M,stdTitleY);
+    standardCols.forEach((col,index)=>{
+      const x=M+index*(stdW+stdGap);ctx.fillStyle=C_ACCENT;ctx.font=F_LABEL;ctx.fillText(col.title,x,stdGroupTitleY);
+      drawStack(col.items,x,stdCardsY,stdW);
+    });
+  }
+  rr(ctx,M,currentY,contentW,currentHeight,16);ctx.fillStyle="#eaf2ee";ctx.fill();ctx.strokeStyle=C_ACCENT;ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle=C_ACCENT;ctx.font=F_LABEL;
+  ctx.fillText("当前单元要素　·　"+(D.versions[u.vol]?.name0||u.vol)+" 第"+u.unit+"单元",M+24,currentY+17);
+  ctx.fillStyle="#182c25";ctx.font=F_CURRENT;
+  for(let i=0;i<currentLines.length;i++)ctx.fillText(currentLines[i],M+24,currentY+52+i*46);
+
+  let pathY=pathsY;
+  for(const row of pathRows){
+    rr(ctx,M,pathY,contentW,row.height,14);ctx.fillStyle=C_CARD;ctx.fill();ctx.strokeStyle=C_BORDER;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=C_ACCENT;ctx.font=F_HEAD;ctx.fillText(row.path.name,M+24,pathY+14);
+    const headY=pathY+54,nodesY=pathY+84;
+    ctx.fillStyle=C_MUTED;ctx.font=F_LABEL;
+    ctx.fillText("此前相关（由近及远）",leftX,headY);
+    ctx.fillText("此后相关（由近及远）",rightX,headY);
+    ctx.strokeStyle=C_BORDER;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(leftX+columnW+columnGap/2,pathY+48);ctx.lineTo(leftX+columnW+columnGap/2,pathY+row.height-16);ctx.stroke();
+    drawList(row.path.pre,leftX,nodesY,columnW);
+    drawList(row.path.post,rightX,nodesY,columnW);
+    pathY+=row.height+20;
+  }
+
+  canvas.toBlob(blob=>{
+    if(!blob)return;
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download=(D.versions[u.vol]?.name0||u.vol)+"_第"+u.unit+"单元_要素脉络图.png";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  },"image/png");
 }
 
 /* ================= 导出 3：打印 / 另存为 PDF（专用打印排版 + 完整附录） ================= */
