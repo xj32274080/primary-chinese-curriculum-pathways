@@ -1,0 +1,36 @@
+{
+  "release_date": "2026-10-10",
+  "title": "课标统领的教材脉络图 · 导出版",
+  "public_path_cleanup": "48处本机绝对路径替换为来源文件名；教材页码和书目信息保留。",
+  "validation": {
+    "q49": "94个单元、155条要素、13条能力脉络通过全表互指审计。",
+    "q50": "静态导出结构检查通过，JavaScript语法检查通过；本版页面视觉、PNG下载和打印PDF复验仍待人工完成。",
+    "q52": "最终结构复审无结构性发现；适用证据不足处保留待核。"
+  },
+  "files": {
+    "index.html": {
+      "bytes": 500188,
+      "sha256": "4d4ab5521ccf208b7aa7596bcf81572749b00f859088a4066a1bd178170fce33"
+    },
+    "续作交接_2026-10-06/curriculum_data.json": {
+      "bytes": 510355,
+      "sha256": "b1d2da0f22234bca719a0b139f3ad61e6adc0fd51571667a4ed638e0a64a085f"
+    },
+    "logic.js": {
+      "bytes": 92005,
+      "sha256": "fa22e8edc713246b0c66c01d925178219248f66e36278c1b66759bb2869c1ed2"
+    },
+    "styles.css": {
+      "bytes": 21310,
+      "sha256": "edd1e5da0e1da0cf45b2846228164db231f8807d302ff495864186e142774b14"
+    },
+    "make_deliverable.py": {
+      "bytes": 6156,
+      "sha256": "b0b6a90460a974fde6c6b32df2aaaf181647a16c33d30cefa02be76109d9258b"
+    },
+    "课标统领的教材脉络图_单元要素版.html": {
+      "bytes": 165636,
+      "sha256": "8d4da60e81c1db566491729a46a97c4f43c46a1397871a41914d3908352a21e0"
+    }
+  }
+}

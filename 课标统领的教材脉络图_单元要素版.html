@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>课标统领的教材脉络图 · 单元要素版</title>
+<style>
+:root{
+  --bd:#ded8cc;--bd2:#c9bea9;--txt:#1f211c;--muted:#6f6a5f;--bg:#f6f2ea;--card:#fffdf8;
+  --accent:#2f5d50;--accent2:#b9653b;--kbbg:#eef4f1;--kbbd:#bcd3ca;--qubg:#fdf4e8;--qubd:#e6c9a3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:14px;line-height:1.6}
+.wrap{max-width:1400px;margin:0 auto;padding:14px 16px 60px}
+/* ---------- 顶栏 ---------- */
+.top{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 15px;
+  position:sticky;top:6px;z-index:30;box-shadow:0 10px 26px rgba(55,48,35,.07)}
+.t1{font-size:19px;font-weight:800}
+.t2{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.65}
+.tools{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--bd);background:#fff;color:var(--txt);font:inherit;font-size:13px;
+  padding:6px 12px;border-radius:999px;cursor:pointer;line-height:1.3}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.spacer{flex:1 1 auto}
+/* ---------- 第一层：全表 ---------- */
+.volhead{display:flex;align-items:baseline;gap:10px;margin:20px 2px 9px;flex-wrap:wrap;
+  padding-bottom:6px;border-bottom:2px solid var(--bd2)}
+.volhead b{font-size:16px}
+.volhead span{font-size:11.5px;color:var(--muted)}
+.volhead .tagv{border:1px solid var(--bd2);border-radius:5px;padding:1px 7px;font-size:11px;background:#fff}
+.volhead .tagv.ok{background:var(--accent);color:#fff;border-color:var(--accent)}
+.volhead .tagv.todo{background:var(--qubg);color:var(--accent2);border-color:var(--qubd)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:11px}
+.unit{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.unit h4{margin:0 0 3px;font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.unit h4 span{font-size:11px;color:var(--muted);font-weight:400}
+.unit .theme{font-size:12px;color:var(--accent2);margin-bottom:7px;line-height:1.5}
+.el{display:block;width:100%;text-align:left;border:1px solid var(--bd);background:#fff;
+  border-radius:9px;padding:7px 9px;margin-bottom:6px;font:inherit;font-size:13px;cursor:pointer;
+  line-height:1.55;position:relative;padding-left:30px}
+.el:hover{border-color:var(--accent);box-shadow:0 3px 10px rgba(47,93,80,.10)}
+.el .no{position:absolute;left:8px;top:7px;width:15px;height:15px;border-radius:50%;
+  background:var(--bd2);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+.el.linked .no{background:var(--accent)}
+.el .badge{display:inline-block;font-size:10.5px;padding:0 6px;border-radius:4px;margin-left:5px;
+  border:1px solid var(--bd2);background:#fff;color:var(--muted);vertical-align:1px}
+.el.linked .badge{background:var(--kbbg);color:var(--accent);border-color:var(--kbbd)}
+.el .badge.todo{background:var(--qubg);color:var(--accent2);border-color:var(--qubd)}
+/* ---------- 第二层：脉络图 ---------- */
+#detail{display:none}
+.crumb{font-size:13px;color:var(--muted);margin:14px 2px 10px}
+.crumb button{border:0;background:none;color:var(--accent);font:inherit;cursor:pointer;
+  text-decoration:underline;padding:0}
+.kbzone{background:var(--card);border:1px solid var(--bd);border-radius:13px;padding:12px 14px;margin-bottom:12px}
+.kbzone h3{margin:0 0 8px;font-size:14px}
+.kbtabs{display:flex;gap:7px;margin-bottom:9px}
+.kbcol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:860px){.kbcol{grid-template-columns:1fr}}
+.kbitem{border:1px solid var(--kbbd);background:var(--kbbg);border-radius:10px;padding:9px 11px;
+  font-size:13px;line-height:1.7;cursor:pointer}
+.kbitem .ref{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px}
+.kbitem .short{color:var(--txt)}
+.kbitem .full{display:none;margin-top:7px;padding-top:7px;border-top:1px dashed var(--kbbd)}
+.kbitem.open .full{display:block}
+.kbitem .lbl{font-size:10.5px;color:var(--accent2);border:1px solid var(--qubd);background:var(--qubg);
+  border-radius:4px;padding:0 5px;margin-right:5px}
+.pathtabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 2px 10px}
+.pathnote{font-size:12px;color:var(--muted);margin:0 2px 12px}
+.board{display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:12px;align-items:start}
+@media(max-width:1000px){.board{grid-template-columns:1fr}}
+.side{display:flex;flex-direction:column;gap:9px}
+.sideh{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.4px;padding:0 4px}
+.node{background:var(--card);border:1px solid var(--bd);border-radius:11px;padding:9px 11px;cursor:pointer}
+.node:hover{border-color:var(--accent)}
+.node .nh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:3px}
+.node .nh b{font-size:13px;color:var(--accent)}
+.node .nh span{font-size:11px;color:var(--muted)}
+.node .sum{font-size:12.5px;color:var(--txt);line-height:1.55}
+.node .sum i{font-style:normal;font-size:10.5px;color:var(--accent2);border:1px solid var(--qubd);
+  background:var(--qubg);border-radius:4px;padding:0 5px;margin-right:5px}
+.node .full{display:none;margin-top:7px;padding-top:7px;border-top:1px dashed var(--bd2);font-size:12.5px}
+.node.open .full{display:block}
+.node .full .row{margin-bottom:5px}
+.node .full .k{color:var(--muted);font-size:11px}
+.more{border:1px dashed var(--bd2);background:#fff;color:var(--muted);font:inherit;font-size:12px;
+  padding:6px;border-radius:9px;cursor:pointer;width:100%}
+.center{background:linear-gradient(180deg,#fffdf8,#f3f8f5);border:2px solid var(--accent);
+  border-radius:14px;padding:14px 16px}
+.center .ch{font-size:12px;color:var(--muted);margin-bottom:6px}
+.center .ct{font-size:18px;line-height:1.65;font-weight:600;margin-bottom:9px}
+.center .cm{font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.center .cnote{font-size:12px;color:var(--accent2);margin-top:9px;padding-top:8px;
+  border-top:1px dashed var(--bd2)}
+.arrowrow{display:flex;justify-content:space-between;color:var(--bd2);font-size:20px;padding:0 6px}
+.lbl2{display:inline-block;font-size:10.5px;padding:0 6px;border-radius:4px;margin-right:5px;
+  border:1px solid var(--bd2);background:#fff;color:var(--muted)}
+.lbl2.src{background:var(--kbbg);color:var(--accent);border-color:var(--kbbd)}
+.lbl2.jd{background:var(--qubg);color:var(--accent2);border-color:var(--qubd)}
+.lbl2.todo{background:#fff;color:var(--accent2);border-color:var(--qubd)}
+.legend{font-size:12px;color:var(--muted);margin:10px 2px;line-height:1.8}
+.empty{background:var(--card);border:1px dashed var(--bd2);border-radius:11px;padding:14px;
+  font-size:13px;color:var(--muted);line-height:1.7}
+.foot{font-size:11.5px;color:var(--muted);margin-top:26px;line-height:1.8;
+  border-top:1px solid var(--bd);padding-top:12px}
+
+.unit .theme { font-size: 12px; color: var(--accent2); margin-bottom: 7px; line-height: 1.5; font-weight: 500; }
+.center .theme-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; background: var(--qubg); color: var(--accent2); border: 1px solid var(--qubd); margin-left: 6px; }
+.source-tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; background: #eef4f1; color: var(--accent); border: 1px solid var(--kbbd); }
+.same-unit-box { background: #fffcf5; border: 1px dashed var(--qubd); border-radius: 9px; padding: 8px 10px; margin-bottom: 9px; font-size: 12.5px; }
+
+@media(max-width: 900px){
+  #detail { display: flex; flex-direction: column; }
+  #detail .crumb { order: 1; }
+  #detail .center { order: 2; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(47,93,80,.12); }
+  #detail .pathtabs { order: 3; }
+  #detail .pathnote { order: 4; }
+  #detail .kbzone { order: 5; margin-bottom: 12px; }
+  #detail .board { order: 6; display: flex; flex-direction: column; }
+  #detail .board .side.pre-side { order: 1; }
+  #detail .board .center { display: none; } /* 窄屏已在顶部显示 */
+  #detail .board .side.post-side { order: 2; }
+  #detail .legend { order: 7; }
+}
+
+
+.unit .theme { font-size: 12px; color: var(--accent2); margin-bottom: 7px; line-height: 1.5; font-weight: 500; }
+.center .theme-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; background: var(--qubg); color: var(--accent2); border: 1px solid var(--qubd); margin-left: 6px; }
+.source-tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; background: #eef4f1; color: var(--accent); border: 1px solid var(--kbbd); }
+.same-unit-box { background: #fffcf5; border: 1px dashed var(--qubd); border-radius: 9px; padding: 8px 10px; margin-bottom: 9px; font-size: 12.5px; }
+
+.center-mobile { display: none; }
+.center-desktop { display: block; }
+
+@media(max-width: 900px){
+  .center-mobile { display: block; margin-bottom: 12px; }
+  .center-desktop { display: none; }
+  .board { display: flex; flex-direction: column; gap: 12px; }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="t1">课标统领的教材脉络图 · 单元要素版</div>
+    <div class="t2" id="sub"></div>
+    <div class="tools" id="tools"></div>
+  </div>
+  <div id="table"></div>
+  <div id="detail"></div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+const FULL = {"一上": "一年级上册", "一下": "一年级下册", "二上": "二年级上册", "二下": "二年级下册", "三上": "三年级上册", "三下": "三年级下册", "四上": "四年级上册", "四下": "四年级下册", "五上": "五年级上册", "五下": "五年级下册", "六上": "六年级上册", "六下": "六年级下册"};
+const D = {"meta": {"title": "课标统领的教材脉络图 · 单元要素版", "built": "2026-10-05", "kbiaoSource": "义务教育语文课程标准日常修订版（2022年版2025年修订）_可搜索.pdf.txt", "kbiaoNote": "课标学段引文取自本机 PDF 提取文本，印刷页码=PDF页码-3。文件名含「2025年修订」，本表不据此宣称官方版本身份。", "qualityNote": "学业质量一节在课标中未编号。本表只标学段、章节、印刷页码与完整语句，不标段序与情境——原文分段无空行且跨页，纯文本无法可靠还原段落边界。", "verifyNote": "本轮回原始 PDF 核对 8 个单元导语页（四下一/三、五上一/四/六/八、六上八、六下三均记 PDF 页码与印刷页码）；四下、五下、六下整册经核定为教育部统编语文教材旧版。其余单元沿用早前逐页提取结果。", "scopeNote": "本表只整理五条脉络。未进入这五条脉络的要素标「该要素的关联尚未整理」，不按单元编号推测。"}, "units": {"一上-一": {"id": "一上-一", "vol": "一上", "volName": "一年级上册", "unit": "一", "xueduan": 1, "page": 8, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一上-二": {"id": "一上-二", "vol": "一上", "volName": "一年级上册", "unit": "二", "xueduan": 1, "page": 20, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一上-三": {"id": "一上-三", "vol": "一上", "volName": "一年级上册", "unit": "三", "xueduan": 1, "page": 32, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一上-四": {"id": "一上-四", "vol": "一上", "volName": "一年级上册", "unit": "四", "xueduan": 1, "page": 45, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一上-五": {"id": "一上-五", "vol": "一上", "volName": "一年级上册", "unit": "五", "xueduan": 1, "page": 60, "theme": "四季之美", "quote": "", "人文主题": "四季之美", "elements": [{"eid": "一上-五-1", "seq": 1, "text": "借助拼音正确朗读课文", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一上-六": {"id": "一上-六", "vol": "一上", "volName": "一年级上册", "unit": "六", "xueduan": 1, "page": 73, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一上-七": {"id": "一上-七", "vol": "一上", "volName": "一年级上册", "unit": "七", "xueduan": 1, "page": 84, "theme": "儿童生活", "quote": "", "人文主题": "儿童生活", "elements": [{"eid": "一上-七-1", "seq": 1, "text": "初步学习寻找明显的信息", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一上-八": {"id": "一上-八", "vol": "一上", "volName": "一年级上册", "unit": "八", "xueduan": 1, "page": 95, "theme": "观察与想象", "quote": "", "人文主题": "观察与想象", "elements": [{"eid": "一上-八-1", "seq": 1, "text": "读好长句子", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-一": {"id": "一下-一", "vol": "一下", "volName": "一年级下册", "unit": "一", "xueduan": 1, "page": 2, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一下-二": {"id": "一下-二", "vol": "一下", "volName": "一年级下册", "unit": "二", "xueduan": 1, "page": 16, "theme": "美好愿望", "quote": "", "人文主题": "美好愿望", "elements": [{"eid": "一下-二-1", "seq": 1, "text": "读好长句子", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-三": {"id": "一下-三", "vol": "一下", "volName": "一年级下册", "unit": "三", "xueduan": 1, "page": 26, "theme": "快乐伙伴", "quote": "", "人文主题": "快乐伙伴", "elements": [{"eid": "一下-三-1", "seq": 1, "text": "联系上下文了解词语的意思", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-四": {"id": "一下-四", "vol": "一下", "volName": "一年级下册", "unit": "四", "xueduan": 1, "page": 39, "theme": "温馨的家", "quote": "", "人文主题": "温馨的家", "elements": [{"eid": "一下-四-1", "seq": 1, "text": "读好长句子", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "一下-四-2", "seq": 2, "text": "找出课文中明显的信息", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-五": {"id": "一下-五", "vol": "一下", "volName": "一年级下册", "unit": "五", "xueduan": 1, "page": 48, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "一下-六": {"id": "一下-六", "vol": "一下", "volName": "一年级下册", "unit": "六", "xueduan": 1, "page": 61, "theme": "多彩的夏日", "quote": "", "人文主题": "多彩的夏日", "elements": [{"eid": "一下-六-1", "seq": 1, "text": "联系生活实际了解词语的意思", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-七": {"id": "一下-七", "vol": "一下", "volName": "一年级下册", "unit": "七", "xueduan": 1, "page": 78, "theme": "养成好习惯", "quote": "", "人文主题": "养成好习惯", "elements": [{"eid": "一下-七-1", "seq": 1, "text": "根据课文信息作简单推断", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "一下-八": {"id": "一下-八", "vol": "一下", "volName": "一年级下册", "unit": "八", "xueduan": 1, "page": 98, "theme": "身边的问号", "quote": "", "人文主题": "身边的问号", "elements": [{"eid": "一下-八-1", "seq": 1, "text": "借助图画阅读课文", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-一": {"id": "二上-一", "vol": "二上", "volName": "二年级上册", "unit": "一", "xueduan": 1, "page": 1, "theme": "大自然的秘密", "quote": "", "人文主题": "大自然的秘密", "elements": [{"eid": "二上-一-1", "seq": 1, "text": "借助图片，了解课文内容", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-二": {"id": "二上-二", "vol": "二上", "volName": "二年级上册", "unit": "二", "xueduan": 1, "page": 16, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "二上-三": {"id": "二上-三", "vol": "二上", "volName": "二年级上册", "unit": "三", "xueduan": 1, "page": 28, "theme": "发现的乐趣", "quote": "", "人文主题": "发现的乐趣", "elements": [{"eid": "二上-三-1", "seq": 1, "text": "对感兴趣的内容说出自己的感受或想法", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-四": {"id": "二上-四", "vol": "二上", "volName": "二年级上册", "unit": "四", "xueduan": 1, "page": 39, "theme": "祖国锦绣河山", "quote": "", "人文主题": "祖国锦绣河山", "elements": [{"eid": "二上-四-1", "seq": 1, "text": "联系上下文和生活经验，了解词句的意思", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-五": {"id": "二上-五", "vol": "二上", "volName": "二年级上册", "unit": "五", "xueduan": 1, "page": 54, "theme": "思考的乐趣", "quote": "", "人文主题": "思考的乐趣", "elements": [{"eid": "二上-五-1", "seq": 1, "text": "初步体会课文讲述的道理", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "二上-五-2", "seq": 2, "text": "体会句子不同的语气", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-六": {"id": "二上-六", "vol": "二上", "volName": "二年级上册", "unit": "六", "xueduan": 1, "page": 67, "theme": "革命先辈", "quote": "", "人文主题": "革命先辈", "elements": [{"eid": "二上-六-1", "seq": 1, "text": "借助相关词句，了解课文内容", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-七": {"id": "二上-七", "vol": "二上", "volName": "二年级上册", "unit": "七", "xueduan": 1, "page": 81, "theme": "奇妙的想象", "quote": "", "人文主题": "奇妙的想象", "elements": [{"eid": "二上-七-1", "seq": 1, "text": "展开想象，获得初步的情感体验", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二上-八": {"id": "二上-八", "vol": "二上", "volName": "二年级上册", "unit": "八", "xueduan": 1, "page": 95, "theme": "相处与交往", "quote": "", "人文主题": "相处与交往", "elements": [{"eid": "二上-八-1", "seq": 1, "text": "综合运用多种方法自主识字", "orient": "识字与写字", "orientNote": "教研判断，非教材官方分类"}, {"eid": "二上-八-2", "seq": 2, "text": "学习默读，试着不出声，不指读", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-一": {"id": "二下-一", "vol": "二下", "volName": "二年级下册", "unit": "一", "xueduan": 1, "page": 1, "theme": "寻找春天", "quote": "", "人文主题": "寻找春天", "elements": [{"eid": "二下-一-1", "seq": 1, "text": "朗读课文，注意语气和重音", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-二": {"id": "二下-二", "vol": "二下", "volName": "二年级下册", "unit": "二", "xueduan": 1, "page": 15, "theme": "关爱助人", "quote": "", "人文主题": "关爱助人", "elements": [{"eid": "二下-二-1", "seq": 1, "text": "读句子，想象画面", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-三": {"id": "二下-三", "vol": "二下", "volName": "二年级下册", "unit": "三", "xueduan": 1, "page": 29, "theme": "", "quote": "", "人文主题": "教参亦未写明", "elements": []}, "二下-四": {"id": "二下-四", "vol": "二下", "volName": "二年级下册", "unit": "四", "xueduan": 1, "page": 42, "theme": "充满童真的想象", "quote": "", "人文主题": "充满童真的想象", "elements": [{"eid": "二下-四-1", "seq": 1, "text": "展开想象，理解课文内容", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-五": {"id": "二下-五", "vol": "二下", "volName": "二年级下册", "unit": "五", "xueduan": 1, "page": 55, "theme": "思考与尝试", "quote": "", "人文主题": "思考与尝试", "elements": [{"eid": "二下-五-1", "seq": 1, "text": "根据课文内容，简单说说自己的感受或想法", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-六": {"id": "二下-六", "vol": "二下", "volName": "二年级下册", "unit": "六", "xueduan": 1, "page": 69, "theme": "探索奥秘", "quote": "", "人文主题": "探索奥秘", "elements": [{"eid": "二下-六-1", "seq": 1, "text": "提取主要信息，了解课文内容", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-七": {"id": "二下-七", "vol": "二下", "volName": "二年级下册", "unit": "七", "xueduan": 1, "page": 84, "theme": "接纳与改变", "quote": "", "人文主题": "接纳与改变", "elements": [{"eid": "二下-七-1", "seq": 1, "text": "借助提示讲故事", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "二下-七-2", "seq": 2, "text": "继续学习默读", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "二下-八": {"id": "二下-八", "vol": "二下", "volName": "二年级下册", "unit": "八", "xueduan": 1, "page": 100, "theme": "远古传说", "quote": "", "人文主题": "远古传说", "elements": [{"eid": "二下-八-1", "seq": 1, "text": "按照事情的发展过程讲故事", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-一": {"id": "三上-一", "vol": "三上", "volName": "三年级上册", "unit": "一", "xueduan": 2, "page": 1, "theme": "寻访多彩校园，留下欢乐印迹。", "quote": "", "引语": "美丽的校园，成长的摇篮，梦想启航的地方。", "人文主题": "寻访多彩校园，留下欢乐印迹。", "elements": [{"eid": "三上-一-1", "seq": 1, "text": "阅读时，关注有新鲜感的词语和句子。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-一-2", "seq": 2, "text": "体会习作的乐趣。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-二": {"id": "三上-二", "vol": "三上", "volName": "三年级上册", "unit": "二", "xueduan": 2, "page": 13, "theme": "感受金秋时节的自然之美。", "quote": "", "引语": "金秋的阳光，洒在树叶上，洒在花瓣上，也洒在我们的心上。", "人文主题": "感受金秋时节的自然之美。", "elements": [{"eid": "三上-二-1", "seq": 1, "text": "运用多种方法理解难懂的词语。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-二-2", "seq": 2, "text": "学习写日记，记录自己的见闻、感受。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-三": {"id": "三上-三", "vol": "三上", "volName": "三年级上册", "unit": "三", "xueduan": 2, "page": 27, "theme": "猜测与推想，使我们的阅读之旅充满了乐趣。", "quote": "", "人文主题": "猜测与推想，使我们的阅读之旅充满了乐趣。", "elements": [{"eid": "三上-三-1", "seq": 1, "text": "了解预测的基本方法并尝试运用。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-三-2", "seq": 2, "text": "尝试续编故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-四": {"id": "三上-四", "vol": "三上", "volName": "三年级上册", "unit": "四", "xueduan": 2, "page": 45, "theme": "阅读童话，构筑充满童心的精神乐园。", "quote": "", "引语": "乘着想象的翅膀，游历奇妙的童话王国，看花儿跳舞，听星星歌唱。", "人文主题": "阅读童话，构筑充满童心的精神乐园。", "elements": [{"eid": "三上-四-1", "seq": 1, "text": "感受童话丰富的想象，体会其中的真善美。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-四-2", "seq": 2, "text": "试着自己编童话、写童话。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-五": {"id": "三上-五", "vol": "三上", "volName": "三年级上册", "unit": "五", "xueduan": 2, "page": 59, "theme": "生活中不缺少美，只是缺少发现美的眼睛。—— [法国] 罗丹", "quote": "", "人文主题": "生活中不缺少美，只是缺少发现美的眼睛。—— [法国] 罗丹", "elements": [{"eid": "三上-五-1", "seq": 1, "text": "体会作者是怎样留心观察周围事物的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-五-2", "seq": 2, "text": "仔细观察，把观察所得写下来。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-六": {"id": "三上-六", "vol": "三上", "volName": "三年级上册", "unit": "六", "xueduan": 2, "page": 69, "theme": "饱览大好河山，感受祖国之美。", "quote": "", "引语": "祖国，我爱你。我爱你壮美的山河，我爱你每一寸土地。", "人文主题": "饱览大好河山，感受祖国之美。", "elements": [{"eid": "三上-六-1", "seq": 1, "text": "借助关键语句理解一段话的意思。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-六-2", "seq": 2, "text": "学习围绕一个意思把一段话写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-七": {"id": "三上-七", "vol": "三上", "volName": "三年级上册", "unit": "七", "xueduan": 2, "page": 83, "theme": "探索自然，发现生命之美。", "quote": "", "引语": "大自然赐给我们许多珍贵的礼物，你发现了吗？", "人文主题": "探索自然，发现生命之美。", "elements": [{"eid": "三上-七-1", "seq": 1, "text": "感受课文生动的语言，积累喜欢的语句。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-七-2", "seq": 2, "text": "留心生活，把自己的想法记录下来。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三上-八": {"id": "三上-八", "vol": "三上", "volName": "三年级上册", "unit": "八", "xueduan": 2, "page": 95, "theme": "感悟美好品质，获取精神力量。", "quote": "", "引语": "美好的品质，犹如温暖的阳光，带给我们希望和力量。", "人文主题": "感悟美好品质，获取精神力量。", "elements": [{"eid": "三上-八-1", "seq": 1, "text": "学习带着问题默读，理解课文内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三上-八-2", "seq": 2, "text": "学写一件简单的事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-一": {"id": "三下-一", "vol": "三下", "volName": "三年级下册", "unit": "一", "xueduan": 2, "page": 1, "theme": "亲近动物植物，热爱自然与生命。", "quote": "", "引语": "鸟儿在空中翱翔，蝴蝶在花间嬉戏……大自然中，处处有可爱的生灵。", "人文主题": "亲近动物植物，热爱自然与生命。", "elements": [{"eid": "三下-一-1", "seq": 1, "text": "试着一边读一边想象画面；体会优美生动的语句。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-一-2", "seq": 2, "text": "试着把观察到的事物写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-二": {"id": "三下-二", "vol": "三下", "volName": "三年级下册", "unit": "二", "xueduan": 2, "page": 15, "theme": "从寓言中获得人生启示。", "quote": "", "引语": "寓言是生活的一面镜子。", "人文主题": "从寓言中获得人生启示。", "elements": [{"eid": "三下-二-1", "seq": 1, "text": "读故事，明白其中的道理。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-二-2", "seq": 2, "text": "把图画的内容写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-三": {"id": "三下-三", "vol": "三下", "volName": "三年级下册", "unit": "三", "xueduan": 2, "page": 33, "theme": "观察自然，探索世界。", "quote": "", "引语": "看，花儿在悄悄绽放；听，虫儿在窃窃私语……自然界如此奇妙，留心观察，会有新的发现。", "人文主题": "观察自然，探索世界。", "elements": [{"eid": "三下-三-1", "seq": 1, "text": "借助关键语句概括一段话的大意。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-三-2", "seq": 2, "text": "做个小实验，把实验过程写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-四": {"id": "三下-四", "vol": "三下", "volName": "三年级下册", "unit": "四", "xueduan": 2, "page": 43, "theme": "感受古人智慧，领略中华文化的魅力。", "quote": "", "引语": "中华优秀传统文化，是中华民族的根和魂。", "人文主题": "感受古人智慧，领略中华文化的魅力。", "elements": [{"eid": "三下-四-1", "seq": 1, "text": "了解课文是怎么围绕一个意思把一段话写清楚的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-四-2", "seq": 2, "text": "收集传统节日的资料，交流节日的风俗习惯，写一写过节的情景。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-五": {"id": "三下-五", "vol": "三下", "volName": "三年级下册", "unit": "五", "xueduan": 2, "page": 57, "theme": "想象力比知识更重要。—— [美国] 爱因斯坦", "quote": "", "人文主题": "想象力比知识更重要。—— [美国] 爱因斯坦", "elements": [{"eid": "三下-五-1", "seq": 1, "text": "在阅读中感受想象的神奇。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-五-2", "seq": 2, "text": "发挥想象写故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-六": {"id": "三下-六", "vol": "三下", "volName": "三年级下册", "unit": "六", "xueduan": 2, "page": 69, "theme": "品味多彩童年，感受美好的童心。", "quote": "", "引语": "在童年的百花园里，我们看到了真善美。", "人文主题": "品味多彩童年，感受美好的童心。", "elements": [{"eid": "三下-六-1", "seq": 1, "text": "运用多种方法理解难懂的句子。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-六-2", "seq": 2, "text": "写一个身边的人，尝试写出这个人的特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-七": {"id": "三下-七", "vol": "三下", "volName": "三年级下册", "unit": "七", "xueduan": 2, "page": 83, "theme": "发现世界之美，领略大自然的奇妙。", "quote": "", "引语": "天地间隐藏着无穷无尽的奥秘，等待我们去发现。", "人文主题": "发现世界之美，领略大自然的奇妙。", "elements": [{"eid": "三下-七-1", "seq": 1, "text": "阅读写景的文章，了解所描写景物的特点。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-七-2", "seq": 2, "text": "初步学习整合信息，介绍一种事物。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "三下-八": {"id": "三下-八", "vol": "三下", "volName": "三年级下册", "unit": "八", "xueduan": 2, "page": 95, "theme": "走进趣味故事，增长生活智慧。", "quote": "", "引语": "有趣的故事，留下的不仅是开心的笑声，还有许多的思考。", "人文主题": "走进趣味故事，增长生活智慧。", "elements": [{"eid": "三下-八-1", "seq": 1, "text": "了解故事的主要内容，复述故事。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "三下-八-2", "seq": 2, "text": "根据提示，展开想象，尝试编童话故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-一": {"id": "四上-一", "vol": "四上", "volName": "四年级上册", "unit": "一", "xueduan": 2, "page": 1, "theme": "感受美丽风光，体会自然之美。", "quote": "", "引语": "江流天地外，山色有无中。—— [唐] 王维", "人文主题": "感受美丽风光，体会自然之美。", "elements": [{"eid": "四上-一-1", "seq": 1, "text": "边读边想象画面，加深对课文内容的理解。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-一-2", "seq": 2, "text": "推荐一个好地方，写清楚推荐理由。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-二": {"id": "四上-二", "vol": "四上", "volName": "四年级上册", "unit": "二", "xueduan": 2, "page": 13, "theme": "为学患无疑，疑则有进。—— [宋] 陆九渊", "quote": "", "人文主题": "为学患无疑，疑则有进。—— [宋] 陆九渊", "elements": [{"eid": "四上-二-1", "seq": 1, "text": "阅读时尝试从不同角度思考，提出自己的问题。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-二-2", "seq": 2, "text": "写一个人，注意把印象最深的地方写出来。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-三": {"id": "四上-三", "vol": "四上", "volName": "四年级上册", "unit": "三", "xueduan": 2, "page": 33, "theme": "用心观察，发现自然的秘密。", "quote": "", "引语": "处处留心皆学问。", "人文主题": "用心观察，发现自然的秘密。", "elements": [{"eid": "四上-三-1", "seq": 1, "text": "体会文章准确生动的表达，感受作者连续细致的观察。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-三-2", "seq": 2, "text": "进行连续观察，学写观察日记。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-四": {"id": "四上-四", "vol": "四上", "volName": "四年级上册", "unit": "四", "xueduan": 2, "page": 47, "theme": "走进古人的想象世界，感受神话的神奇。", "quote": "", "引语": "神话，永久的魅力，人类童年时代飞腾的幻想。", "人文主题": "走进古人的想象世界，感受神话的神奇。", "elements": [{"eid": "四上-四-1", "seq": 1, "text": "了解故事的起因、经过、结果，学习把握文章的主要内容；感受神话中鲜明的人物形象。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-四-2", "seq": 2, "text": "展开想象，写一个故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-五": {"id": "四上-五", "vol": "四上", "volName": "四年级上册", "unit": "五", "xueduan": 2, "page": 61, "theme": "我手写我心，彩笔绘生活。", "quote": "", "人文主题": "我手写我心，彩笔绘生活。", "elements": [{"eid": "四上-五-1", "seq": 1, "text": "了解作者是怎样把事情写清楚的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-五-2", "seq": 2, "text": "写一件事，把事情写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-六": {"id": "四上-六", "vol": "四上", "volName": "四年级上册", "unit": "六", "xueduan": 2, "page": 73, "theme": "了解中国的世界文化遗产，加深对中华文明的理解。", "quote": "", "引语": "中国文化源远流长，中华文明博大精深。——习近平", "人文主题": "了解中国的世界文化遗产，加深对中华文明的理解。", "elements": [{"eid": "四上-六-1", "seq": 1, "text": "借助关键语句，把握文章的主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-六-2", "seq": 2, "text": "收集、整理资料，尝试介绍一项中国的世界文化遗产。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-七": {"id": "四上-七", "vol": "四上", "volName": "四年级上册", "unit": "七", "xueduan": 2, "page": 87, "theme": "品读儿童故事，体味成长中的酸甜苦辣。", "quote": "", "引语": "童年啊！是梦中的真，是真中的梦，是回忆时含泪的微笑。——冰心", "人文主题": "品读儿童故事，体味成长中的酸甜苦辣。", "elements": [{"eid": "四上-七-1", "seq": 1, "text": "一边读一边作批注，加深对文章的理解。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-七-2", "seq": 2, "text": "写一件事，注意写出自己的感受。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四上-八": {"id": "四上-八", "vol": "四上", "volName": "四年级上册", "unit": "八", "xueduan": 2, "page": 107, "theme": "读古今诗文，感受赤心报国的情怀。", "quote": "", "引语": "天下兴亡，匹夫有责。", "人文主题": "读古今诗文，感受赤心报国的情怀。", "elements": [{"eid": "四上-八-1", "seq": 1, "text": "关注主要人物和事件，把握文章的主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四上-八-2", "seq": 2, "text": "学习写书信。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-一": {"id": "四下-一", "vol": "四下", "volName": "四年级下册", "unit": "一", "xueduan": 2, "page": 1, "theme": "纯朴的乡村，一道独特的风景，一幅和谐的画卷。", "quote": "", "人文主题": "纯朴的乡村，一道独特的风景，一幅和谐的画卷。", "elements": [{"eid": "四下-一-1", "seq": 1, "text": "抓住关键语句，初步体会课文表达的思想感情。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-一-2", "seq": 2, "text": "写喜爱的某个地方，表达出自己的感受。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-二": {"id": "四下-二", "vol": "四下", "volName": "四年级下册", "unit": "二", "xueduan": 2, "page": 15, "theme": "蓝天、森林、大海，蕴藏着自然的奥秘；过去、现在、未来，述说着科技的精彩……", "quote": "", "人文主题": "蓝天、森林、大海，蕴藏着自然的奥秘；过去、现在、未来，述说着科技的精彩……", "elements": [{"eid": "四下-二-1", "seq": 1, "text": "阅读时能提出不懂的问题，并试着解决。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-二-2", "seq": 2, "text": "展开奇思妙想，写一写自己想发明的东西。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-三": {"id": "四下-三", "vol": "四下", "volName": "四年级下册", "unit": "三", "xueduan": 2, "page": 35, "theme": "诗歌，让我们用美丽的眼睛看世界。", "quote": "", "人文主题": "诗歌，让我们用美丽的眼睛看世界。", "elements": [{"eid": "四下-三-1", "seq": 1, "text": "初步了解现代诗的一些特点，体会诗歌表达的情感。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-三-2", "seq": 2, "text": "根据需要收集资料，初步学习整理资料的方法。", "orient": "梳理与探究", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-三-3", "seq": 3, "text": "合作编小诗集，举办诗歌朗诵会。", "orient": "综合学习", "orientNote": "教研标注：教材本单元为综合性学习"}]}, "四下-四": {"id": "四下-四", "vol": "四下", "volName": "四年级下册", "unit": "四", "xueduan": 2, "page": 47, "theme": "奔跑，飞舞；驻足，凝望。可爱的动物，我们的好朋友。", "quote": "", "人文主题": "奔跑，飞舞；驻足，凝望。可爱的动物，我们的好朋友。", "elements": [{"eid": "四下-四-1", "seq": 1, "text": "体会作家是如何表达对动物的感情的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-四-2", "seq": 2, "text": "写自己喜欢的动物，试着写出特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-五": {"id": "四下-五", "vol": "四下", "volName": "四年级下册", "unit": "五", "xueduan": 2, "page": 63, "theme": "妙笔写美景，巧手著奇观。", "quote": "", "人文主题": "妙笔写美景，巧手著奇观。", "elements": [{"eid": "四下-五-1", "seq": 1, "text": "了解课文按一定顺序写景物的方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-五-2", "seq": 2, "text": "学习按游览的顺序写景物。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-六": {"id": "四下-六", "vol": "四下", "volName": "四年级下册", "unit": "六", "xueduan": 2, "page": 75, "theme": "深深浅浅的脚印，写满成长的故事。", "quote": "", "人文主题": "深深浅浅的脚印，写满成长的故事。", "elements": [{"eid": "四下-六-1", "seq": 1, "text": "学习把握长文章的主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-六-2", "seq": 2, "text": "按一定顺序把事情的过程写清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-七": {"id": "四下-七", "vol": "四下", "volName": "四年级下册", "unit": "七", "xueduan": 2, "page": 101, "theme": "没有伟大的品格，就没有伟大的人，甚至也没有伟大的艺术家，伟大的行动者。—— [法国] 罗曼·罗兰", "quote": "", "人文主题": "没有伟大的品格，就没有伟大的人，甚至也没有伟大的艺术家，伟大的行动者。—— [法国] 罗曼·罗兰", "elements": [{"eid": "四下-七-1", "seq": 1, "text": "从人物的语言、动作等描写中感受人物的品质。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-七-2", "seq": 2, "text": "学习从多个方面写出人物的特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "四下-八": {"id": "四下-八", "vol": "四下", "volName": "四年级下册", "unit": "八", "xueduan": 2, "page": 121, "theme": "奇妙的童话，点燃缤纷的焰火，照亮我们五彩的梦。", "quote": "", "人文主题": "奇妙的童话，点燃缤纷的焰火，照亮我们五彩的梦。", "elements": [{"eid": "四下-八-1", "seq": 1, "text": "感受童话的奇妙，体会人物真善美的形象。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "四下-八-2", "seq": 2, "text": "按自己的想法新编故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-一": {"id": "五上-一", "vol": "五上", "volName": "五年级上册", "unit": "一", "xueduan": 3, "page": 1, "theme": "感受万物生灵，领悟爱与生命的意义。", "quote": "", "引语": "一花一鸟总关情。", "人文主题": "感受万物生灵，领悟爱与生命的意义。", "elements": [{"eid": "五上-一-1", "seq": 1, "text": "初步体会文章借助具体事物表达的思想感情。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-一-2", "seq": 2, "text": "写一种心爱的事物，表达自己的感情。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-二": {"id": "五上-二", "vol": "五上", "volName": "五年级上册", "unit": "二", "xueduan": 3, "page": 13, "theme": "广然后深，博然后专。", "quote": "", "人文主题": "广然后深，博然后专。", "elements": [{"eid": "五上-二-1", "seq": 1, "text": "学习提高阅读速度的方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-二-2", "seq": 2, "text": "结合具体事例写出人物的特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-三": {"id": "五上-三", "vol": "五上", "volName": "五年级上册", "unit": "三", "xueduan": 3, "page": 33, "theme": "阅读民间故事，感受其中蕴含的朴素愿望和真挚情感。", "quote": "", "引语": "民间故事，口耳相传的经典，老百姓智慧的结晶。", "人文主题": "阅读民间故事，感受其中蕴含的朴素愿望和真挚情感。", "elements": [{"eid": "五上-三-1", "seq": 1, "text": "了解故事内容，并创造性复述。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-三-2", "seq": 2, "text": "按照自己的想法新编故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-四": {"id": "五上-四", "vol": "五上", "volName": "五年级上册", "unit": "四", "xueduan": 3, "page": 51, "theme": "心怀家国天下，感悟责任担当。", "quote": "", "引语": "为什么我的眼里常含泪水？因为我对这土地爱得深沉……—艾青", "人文主题": "心怀家国天下，感悟责任担当。", "elements": [{"eid": "五上-四-1", "seq": 1, "text": "结合资料，深入体会文章表达的思想感情。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-四-2", "seq": 2, "text": "学习列提纲，理清习作思路。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-五": {"id": "五上-五", "vol": "五上", "volName": "五年级上册", "unit": "五", "xueduan": 3, "page": 65, "theme": "说明文以“说明白了”为成功。—叶圣陶", "quote": "", "人文主题": "说明文以“说明白了”为成功。—叶圣陶", "elements": [{"eid": "五上-五-1", "seq": 1, "text": "阅读简单的说明性文章，了解基本的说明方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-五-2", "seq": 2, "text": "搜集资料，运用基本的说明方法，把某一种事物介绍清楚。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-六": {"id": "五上-六", "vol": "五上", "volName": "五年级上册", "unit": "六", "xueduan": 3, "page": 75, "theme": "感受父母之爱，体味至纯至真的深情。", "quote": "", "引语": "舐犊之情，流淌在血液里的爱和温暖。", "人文主题": "感受父母之爱，体味至纯至真的深情。", "elements": [{"eid": "五上-六-1", "seq": 1, "text": "体会文章细节描写中蕴含的情感。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-六-2", "seq": 2, "text": "用恰当的语言表达自己的看法和感受。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-七": {"id": "五上-七", "vol": "五上", "volName": "五年级上册", "unit": "七", "xueduan": 3, "page": 91, "theme": "感受自然之趣，发现自然之美。", "quote": "", "引语": "天地有大美而不言。—《庄子》", "人文主题": "感受自然之趣，发现自然之美。", "elements": [{"eid": "五上-七-1", "seq": 1, "text": "运用多种方法品味文章语言，记录阅读感受。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-七-2", "seq": 2, "text": "写出景物的特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五上-八": {"id": "五上-八", "vol": "五上", "volName": "五年级上册", "unit": "八", "xueduan": 3, "page": 101, "theme": "感悟读书之法，体会读书之乐。", "quote": "", "引语": "多读书、读好书，从书本中汲取智慧和营养。—习近平", "人文主题": "感悟读书之法，体会读书之乐。", "elements": [{"eid": "五上-八-1", "seq": 1, "text": "根据需要梳理信息，把握内容要点。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五上-八-2", "seq": 2, "text": "根据表达的需要，分段表述，突出重点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-一": {"id": "五下-一", "vol": "五下", "volName": "五年级下册", "unit": "一", "xueduan": 3, "page": 1, "theme": "每一个人都有他自己的童年往事，快乐也好，辛酸也好，对于他都是心动神移的最深刻的记忆。—冰心", "quote": "", "人文主题": "每一个人都有他自己的童年往事，快乐也好，辛酸也好，对于他都是心动神移的最深刻的记忆。—冰心", "elements": [{"eid": "五下-一-1", "seq": 1, "text": "体会课文表达的思想感情。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-一-2", "seq": 2, "text": "把一件事的重点部分写具体。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-二": {"id": "五下-二", "vol": "五下", "volName": "五年级下册", "unit": "二", "xueduan": 3, "page": 17, "theme": "观三国烽烟，识梁山好汉，叹取经艰难，惜红楼梦断。", "quote": "", "人文主题": "观三国烽烟，识梁山好汉，叹取经艰难，惜红楼梦断。", "elements": [{"eid": "五下-二-1", "seq": 1, "text": "初步学习阅读古典名著的方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-二-2", "seq": 2, "text": "学习写读后感。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-三": {"id": "五下-三", "vol": "五下", "volName": "五年级下册", "unit": "三", "xueduan": 3, "page": 41, "theme": "横竖撇捺有乾坤，一笔一画成文章。", "quote": "", "人文主题": "横竖撇捺有乾坤，一笔一画成文章。", "elements": [{"eid": "五下-三-1", "seq": 1, "text": "感受汉字的趣味，了解汉字文化。", "orient": "识字与写字", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-三-2", "seq": 2, "text": "学习搜集资料的基本方法。", "orient": "梳理与探究", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-三-3", "seq": 3, "text": "学写简单的研究报告。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-四": {"id": "五下-四", "vol": "五下", "volName": "五年级下册", "unit": "四", "xueduan": 3, "page": 53, "theme": "苟利国家生死以，岂因祸福避趋之。— [清] 林则徐", "quote": "", "人文主题": "苟利国家生死以，岂因祸福避趋之。— [清] 林则徐", "elements": [{"eid": "五下-四-1", "seq": 1, "text": "通过课文中动作、语言、神态的描写，体会人物的内心。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-四-2", "seq": 2, "text": "尝试运用动作、语言、神态描写，表现人物的内心。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-五": {"id": "五下-五", "vol": "五下", "volName": "五年级下册", "unit": "五", "xueduan": 3, "page": 69, "theme": "字里行间众生相，大千世界你我他。", "quote": "", "人文主题": "字里行间众生相，大千世界你我他。", "elements": [{"eid": "五下-五-1", "seq": 1, "text": "学习描写人物的基本方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-五-2", "seq": 2, "text": "初步运用描写人物的基本方法，具体地表现一个人的特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-六": {"id": "五下-六", "vol": "五下", "volName": "五年级下册", "unit": "六", "xueduan": 3, "page": 83, "theme": "思维的火花跨越时空，照亮昨天、今天和明天。", "quote": "", "人文主题": "思维的火花跨越时空，照亮昨天、今天和明天。", "elements": [{"eid": "五下-六-1", "seq": 1, "text": "了解人物的思维过程，加深对课文内容的理解。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-六-2", "seq": 2, "text": "根据情境编故事，把事情发展变化的过程写具体。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-七": {"id": "五下-七", "vol": "五下", "volName": "五年级下册", "unit": "七", "xueduan": 3, "page": 93, "theme": "足下万里，移步换景，寰宇纷呈万花筒。", "quote": "", "人文主题": "足下万里，移步换景，寰宇纷呈万花筒。", "elements": [{"eid": "五下-七-1", "seq": 1, "text": "体会静态描写和动态描写的表达效果。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-七-2", "seq": 2, "text": "搜集资料，介绍一个地方。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "五下-八": {"id": "五下-八", "vol": "五下", "volName": "五年级下册", "unit": "八", "xueduan": 3, "page": 107, "theme": "风趣和幽默是智慧的闪现。", "quote": "", "人文主题": "风趣和幽默是智慧的闪现。", "elements": [{"eid": "五下-八-1", "seq": 1, "text": "感受课文风趣的语言。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "五下-八-2", "seq": 2, "text": "看漫画，写出自己的想法。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-一": {"id": "六上-一", "vol": "六上", "volName": "六年级上册", "unit": "一", "xueduan": 3, "page": 1, "theme": "亲近自然，热爱生活。", "quote": "", "引语": "触摸山川湖海的心跳，倾听花鸟虫鱼的歌声。", "人文主题": "亲近自然，热爱生活。", "elements": [{"eid": "六上-一-1", "seq": 1, "text": "积极思考，从所读的内容想开去。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-一-2", "seq": 2, "text": "习作时发挥想象，注意把重点部分写得详细一些。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-二": {"id": "六上-二", "vol": "六上", "volName": "六年级上册", "unit": "二", "xueduan": 3, "page": 13, "theme": "体会革命前辈为理想奋斗的精神。", "quote": "", "引语": "重温革命岁月，把历史的声音留在心里。", "人文主题": "体会革命前辈为理想奋斗的精神。", "elements": [{"eid": "六上-二-1", "seq": 1, "text": "了解文章是怎样点面结合写场面的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-二-2", "seq": 2, "text": "尝试运用点面结合的写法记一次活动。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-三": {"id": "六上-三", "vol": "六上", "volName": "六年级上册", "unit": "三", "xueduan": 3, "page": 31, "theme": "读书好比串门儿—隐身的串门儿。—杨绛", "quote": "", "人文主题": "读书好比串门儿—隐身的串门儿。—杨绛", "elements": [{"eid": "六上-三-1", "seq": 1, "text": "根据阅读目的，选用恰当的阅读方法。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-三-2", "seq": 2, "text": "写生活体验，试着表达自己的看法。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-四": {"id": "六上-四", "vol": "六上", "volName": "六年级上册", "unit": "四", "xueduan": 3, "page": 49, "theme": "阅读小说，走进作家营造的世界。", "quote": "", "引语": "小说大多是虚构的，却又有生活的影子。", "人文主题": "阅读小说，走进作家营造的世界。", "elements": [{"eid": "六上-四-1", "seq": 1, "text": "关注小说中的情节、环境，感受人物形象。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-四-2", "seq": 2, "text": "发挥想象，创编生活故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-五": {"id": "六上-五", "vol": "六上", "volName": "六年级上册", "unit": "五", "xueduan": 3, "page": 69, "theme": "无论诗歌与长行文字，俱以意为主。意犹帅也。— [明] 王夫之", "quote": "", "人文主题": "无论诗歌与长行文字，俱以意为主。意犹帅也。— [明] 王夫之", "elements": [{"eid": "六上-五-1", "seq": 1, "text": "体会文章是怎样围绕中心意思来写的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-五-2", "seq": 2, "text": "围绕要表达的中心意思，选择和使用材料。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-六": {"id": "六上-六", "vol": "六上", "volName": "六年级上册", "unit": "六", "xueduan": 3, "page": 81, "theme": "守护我们的家园，与自然和谐共生。", "quote": "", "引语": "我们是大地的一部分，大地也是我们的一部分。", "人文主题": "守护我们的家园，与自然和谐共生。", "elements": [{"eid": "六上-六-1", "seq": 1, "text": "抓住关键语句，把握文章的中心意思。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-六-2", "seq": 2, "text": "学写倡议书。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-七": {"id": "六上-七", "vol": "六上", "volName": "六年级上册", "unit": "七", "xueduan": 3, "page": 97, "theme": "怀着好奇心，探索未知世界。", "quote": "", "引语": "科学发现，总是等着好奇而又爱思考的人。", "人文主题": "怀着好奇心，探索未知世界。", "elements": [{"eid": "六上-七-1", "seq": 1, "text": "综合运用多种方法，把握文章的主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-七-2", "seq": 2, "text": "展开想象，试着写科幻故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六上-八": {"id": "六上-八", "vol": "六上", "volName": "六年级上册", "unit": "八", "xueduan": 3, "page": 109, "theme": "初识鲁迅，感受鲁迅的魅力。", "quote": "", "引语": "横眉冷对千夫指，俯首甘为孺子牛。——鲁迅", "人文主题": "初识鲁迅，感受鲁迅的魅力。", "elements": [{"eid": "六上-八-1", "seq": 1, "text": "借助相关资料，理解课文主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六上-八-2", "seq": 2, "text": "选取典型事例，写一写好家风。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-一": {"id": "六下-一", "vol": "六下", "volName": "六年级下册", "unit": "一", "xueduan": 3, "page": 1, "theme": "百里不同风，千里不同俗。", "quote": "", "人文主题": "百里不同风，千里不同俗。", "elements": [{"eid": "六下-一-1", "seq": 1, "text": "分清内容的主次，体会作者是如何详写主要部分的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-一-2", "seq": 2, "text": "习作时注意抓住重点，写出特点。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-二": {"id": "六下-二", "vol": "六下", "volName": "六年级下册", "unit": "二", "xueduan": 3, "page": 19, "theme": "跟随外国文学名著的脚步，去发现更广阔的世界。", "quote": "", "人文主题": "跟随外国文学名著的脚步，去发现更广阔的世界。", "elements": [{"eid": "六下-二-1", "seq": 1, "text": "借助作品梗概，了解名著的主要内容。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-二-2", "seq": 2, "text": "就印象深刻的人物和情节交流感受。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-二-3", "seq": 3, "text": "学习写作品梗概。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-三": {"id": "六下-三", "vol": "六下", "volName": "六年级下册", "unit": "三", "xueduan": 3, "page": 43, "theme": "让真情在笔尖流露。", "quote": "", "人文主题": "让真情在笔尖流露。", "elements": [{"eid": "六下-三-1", "seq": 1, "text": "体会文章是怎样表达情感的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-三-2", "seq": 2, "text": "选择合适的内容写出真情实感。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-四": {"id": "六下-四", "vol": "六下", "volName": "六年级下册", "unit": "四", "xueduan": 3, "page": 57, "theme": "人生自古谁无死？留取丹心照汗青。—[宋]文天祥", "quote": "", "人文主题": "人生自古谁无死？留取丹心照汗青。—[宋]文天祥", "elements": [{"eid": "六下-四-1", "seq": 1, "text": "关注外貌、神态、言行的描写，体会人物品质。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-四-2", "seq": 2, "text": "查阅相关资料，加深对课文的理解。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-四-3", "seq": 3, "text": "习作时选择适合的方式进行表达。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-五": {"id": "六下-五", "vol": "六下", "volName": "六年级下册", "unit": "五", "xueduan": 3, "page": 79, "theme": "科学发现的机遇，总是等着好奇而又爱思考的人。", "quote": "", "人文主题": "科学发现的机遇，总是等着好奇而又爱思考的人。", "elements": [{"eid": "六下-五-1", "seq": 1, "text": "体会文章是怎样用具体事例说明观点的。", "orient": "阅读取向", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-五-2", "seq": 2, "text": "展开想象，写科幻故事。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}, "六下-六": {"id": "六下-六", "vol": "六下", "volName": "六年级下册", "unit": "六", "xueduan": 3, "page": 97, "theme": "那些种在校园里长不大的记忆那些留在岁月中忘不掉的纯真", "quote": "", "人文主题": "那些种在校园里长不大的记忆那些留在岁月中忘不掉的纯真", "elements": [{"eid": "六下-六-1", "seq": 1, "text": "运用学过的方法整理资料。", "orient": "梳理与探究", "orientNote": "教研判断，非教材官方分类"}, {"eid": "六下-六-2", "seq": 2, "text": "策划简单的校园活动，学写策划书。", "orient": "表达取向", "orientNote": "教研判断，非教材官方分类"}]}}, "lines": {"词句理解与品味": {"domain": "阅读与鉴赏", "kbiao": [["第一学段", "阅读与鉴赏", 2], ["第二学段", "阅读与鉴赏", 2], ["第三学段", "阅读与鉴赏", 2]], "summary": "了解意思 → 理解意思并体会情意作用 → 推想、辨析并体会表达效果。", "note": "对课标原文的教研归纳，不是课标规定的分类；后一阶段仍需基础理解。", "quality": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}], "nodes": [{"eid": "一下-三-1", "uid": "一下-三", "link": "理解依据是上下文。", "key": true, "verified": false}, {"eid": "一下-六-1", "uid": "一下-六", "link": "理解依据换成生活经验；与上一条并置，说明依据可选。", "key": false, "verified": false}, {"eid": "二上-四-1", "uid": "二上-四", "link": "两条依据合并使用，对象由词语扩到词句。", "key": false, "verified": false}, {"eid": "三上-二-1", "uid": "三上-二", "link": "要求“运用多种方法”，指名的是方法的选用，而非某一种依据。", "key": true, "verified": false}, {"eid": "三上-七-1", "uid": "三上-七", "link": "指向语言的感受与积累，与理解词句有关但落点在积累。", "key": false, "verified": false}, {"eid": "三下-一-1", "uid": "三下-一", "link": "指向体会语句的生动，本单元重点在想象画面。", "key": false, "verified": false}, {"eid": "三下-六-1", "uid": "三下-六", "link": "对象从词语变为句子。", "key": true, "verified": false}, {"eid": "五上-七-1", "uid": "五上-七", "link": "要求品味语言并记录感受，把感受写下来作为要求的一部分。", "key": true, "verified": false}], "crossDomain": [], "verifiedUnits": ["四下-一", "四下-三", "五上-一", "五上-四", "五上-六", "五上-八", "六上-八", "六下-三"]}, "内容与信息把握": {"domain": "阅读与鉴赏", "kbiao": [["第二学段", "阅读与鉴赏", 3], ["第三学段", "阅读与鉴赏", 5], ["第三学段", "阅读与鉴赏", 3]], "summary": "提取信息 → 段意概括 → 把握主要内容 → 把握中心意思。", "note": "这几项有关联但不是同一概念；本表不把排列顺序标成能力阶梯。", "quality": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}], "nodes": [{"eid": "一上-七-1", "uid": "一上-七", "link": "定位文中明显的信息，不涉及概括。", "key": false, "verified": false}, {"eid": "一下-四-2", "uid": "一下-四", "link": "同为找出明显信息；本单元另有朗读要求。", "key": false, "verified": false}, {"eid": "一下-七-1", "uid": "一下-七", "link": "在找出信息之后要求作推断，需要连接两处信息。", "key": false, "verified": false}, {"eid": "二上-六-1", "uid": "二上-六", "link": "工具定为相关词句，范围从单点信息扩到课文内容。", "key": false, "verified": false}, {"eid": "二下-六-1", "uid": "二下-六", "link": "提出“主要信息”，需要区分主次。", "key": false, "verified": false}, {"eid": "三上-六-1", "uid": "三上-六", "link": "范围定为一段话，工具定为关键语句。", "key": true, "verified": false}, {"eid": "三下-三-1", "uid": "三下-三", "link": "由理解进到概括，要自己组织语言。", "key": true, "verified": false}, {"eid": "四上-六-1", "uid": "四上-六", "link": "范围从一段话扩到全篇，工具不变。", "key": false, "verified": false}, {"eid": "四上-八-1", "uid": "四上-八", "link": "换成人物＋事件的抓取方式，本单元重点在简要复述。", "key": false, "verified": false}, {"eid": "四下-六-1", "uid": "四下-六", "link": "对象是长文章，要处理的信息量更大。", "key": false, "verified": false}, {"eid": "五上-八-1", "uid": "五上-八", "link": "加入“根据需要”，梳理带有目的性。", "key": true, "verified": true}, {"eid": "五下-六-1", "uid": "五下-六", "link": "工具为人物思维过程，落点在课文内容理解。", "key": true, "verified": false}, {"eid": "六上-六-1", "uid": "六上-六", "link": "对象改为“中心意思”，与主要内容不是同一概念。", "key": true, "verified": false}, {"eid": "六上-七-1", "uid": "六上-七", "link": "不指定具体工具，要求综合运用。", "key": false, "verified": false}], "crossDomain": [], "verifiedUnits": ["四下-一", "四下-三", "五上-一", "五上-四", "五上-六", "五上-八", "六上-八", "六下-三"]}, "形象与情感理解": {"domain": "阅读与鉴赏", "kbiao": [["第二学段", "阅读与鉴赏", 4], ["第三学段", "阅读与鉴赏", 4], ["第三学段", "阅读与鉴赏", 3]], "summary": "体会思想感情与人物品质、内心。", "note": "方案建议本线拆为情感理解与人物形象两支；此处先合看。代表性节点标在直接指向体会思想感情／情感的条目上。", "quality": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}, {"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}], "nodes": [{"eid": "四下-一-1", "uid": "四下-一", "link": "体会对象是“思想感情”，抓手是关键语句。", "key": true, "verified": true}, {"eid": "四下-七-1", "uid": "四下-七", "link": "体会对象改为人物品质，抓手是人物描写。", "key": false, "verified": false}, {"eid": "五上-一-1", "uid": "五上-一", "link": "抓手是具体事物，仍写明“初步”。", "key": true, "verified": true}, {"eid": "五上-四-1", "uid": "五上-四", "link": "本单元明确要求结合资料体会思想感情，程度用“深入”。", "key": true, "verified": true}, {"eid": "五上-六-1", "uid": "五上-六", "link": "抓手是细节描写，情感见于细处。", "key": true, "verified": true}, {"eid": "五下-一-1", "uid": "五下-一", "link": "不再写明抓手，直接要求体会思想感情。", "key": false, "verified": false}, {"eid": "五下-四-1", "uid": "五下-四", "link": "对象是人物内心，抓手是动作、语言、神态描写。", "key": false, "verified": false}, {"eid": "五下-五-2", "uid": "五下-五", "link": "【读写转换】本单元为习作单元，落点在运用描写人物的方法进行具体表达。", "key": false, "verified": false}, {"eid": "五下-六-1", "uid": "五下-六", "link": "思维过程体现人物形象，落点在加深对课文内容的理解。", "key": false, "verified": false}, {"eid": "六上-四-1", "uid": "六上-四", "link": "对象是小说人物形象，借助情节与环境。", "key": false, "verified": false}, {"eid": "六下-三-1", "uid": "六下-三", "link": "对象是文章怎样表达情感，落点在表达方式。", "key": true, "verified": true}, {"eid": "六下-四-1", "uid": "六下-四", "link": "对象回到人物品质，抓手是外貌、神态、言行描写。", "key": false, "verified": false}], "crossDomain": [], "verifiedUnits": ["四下-一", "四下-三", "五上-一", "五上-四", "五上-六", "五上-八", "六上-八", "六下-三"]}, "资料运用": {"domain": "梳理与探究", "kbiao": [["第一学段", "梳理与探究", 3], ["第二学段", "梳理与探究", 3], ["第三学段", "梳理与探究", 3]], "summary": "围绕问题搜集资料 → 整理方法 → 用于理解 → 用于表达与探究。", "note": "这条线跨“梳理与探究”和“阅读与鉴赏”两个领域，不是一根没有分叉的长箭头。", "quality": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}, {"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40", "pdfPage": "43", "text": "能概括说明性文字的主要内容或简单的非连续性文本的关键信息，初步判断内容或信息的合理性；能用准确的语言清楚地介绍、说明事物或程序，运用文本主要信息解决现实生活中的简单问题。", "short": "概括说明性文字关键信息，清楚介绍、说明事物或程序", "scope": "说明性表达与介绍事物"}, {"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}, {"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能根据校园、社会活动的需要，自己或与同学合作撰写活动计划、实施方案或活动总结。", "short": "根据活动需要撰写活动计划、实施方案或活动总结", "scope": "综合实践·活动方案与总结"}], "nodes": [{"eid": "三下-四-2", "uid": "三下-四", "link": "围绕节日主题收集资料；同单元另有写过节情景的要求。", "key": false, "verified": false}, {"eid": "三下-七-2", "uid": "三下-七", "link": "信息整合之后用于介绍一种事物。", "key": false, "verified": false}, {"eid": "四上-六-2", "uid": "四上-六", "link": "为明确的介绍对象收集、整理资料。", "key": false, "verified": false}, {"eid": "四下-三-2", "uid": "四下-三", "link": "写明“根据需要”，收集是有选择的；同时要求初步学习整理方法。", "key": true, "verified": true}, {"eid": "四下-三-3", "uid": "四下-三", "link": "成果呈现环节，资料整理落到可展示的作品上。", "key": false, "verified": true}, {"eid": "五上-四-1", "uid": "五上-四", "link": "本单元明确要求结合资料体会思想感情。", "key": true, "verified": true}, {"eid": "五上-五-2", "uid": "五上-五", "link": "资料用于说明性表达，与说明方法结合。", "key": false, "verified": false}, {"eid": "五下-三-2", "uid": "五下-三", "link": "方法被单独提出：学习搜集资料的基本方法。", "key": false, "verified": false}, {"eid": "五下-三-3", "uid": "五下-三", "link": "成果形式为研究报告，与前面的收集、整理形成一组要求。", "key": false, "verified": false}, {"eid": "六上-八-1", "uid": "六上-八", "link": "资料用于理解课文主要内容，写明“借助相关”。", "key": true, "verified": true}, {"eid": "六下-四-2", "uid": "六下-四", "link": "资料用于加深对课文的理解，与同单元人物品质的体会并列。", "key": false, "verified": false}, {"eid": "六下-六-1", "uid": "六下-六", "link": "要求运用学过的方法整理资料。", "key": false, "verified": false}, {"eid": "六下-六-2", "uid": "六下-六", "link": "资料整理与活动策划书结合，落到真实任务的成果。", "key": false, "verified": false}], "crossDomain": [["第三学段", "阅读与鉴赏", 3]], "verifiedUnits": ["四下-一", "四下-三", "五上-一", "五上-四", "五上-六", "五上-八", "六上-八", "六下-三"]}, "表达组织": {"domain": "表达与交流", "kbiao": [["第二学段", "表达与交流", 4], ["第三学段", "表达与交流", 4], ["第三学段", "表达与交流", 5]], "summary": "写清楚内容 → 分段表述 → 围绕中心选材。", "note": "方案建议追踪选材、组织、分段、详略、修改，并兼顾真实表达目的。", "quality": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "在活动中积累素材，写简单的记实作文，内容具体、感情真实；写想象作文，想象丰富、生动有趣；能写读书笔记、常见应用文。", "short": "积累素材，写简单记实作文与想象作文，内容具体、感情真实", "scope": "表达与交流·记实与想象作文"}], "nodes": [{"eid": "三上-六-2", "uid": "三上-六", "link": "组织单位为一段话，要求围绕一个意思。", "key": true, "verified": false}, {"eid": "四上-五-2", "uid": "四上-五", "link": "组织单位为一件事，仍以写清楚为目标。", "key": false, "verified": false}, {"eid": "四下-六-2", "uid": "四下-六", "link": "增加“按一定顺序”这一组织手段。", "key": true, "verified": false}, {"eid": "五上-四-2", "uid": "五上-四", "link": "要求落到落笔之前的思路组织（列提纲）。", "key": true, "verified": true}, {"eid": "五上-八-2", "uid": "五上-八", "link": "要求分段表述并突出重点，由表达需要决定。", "key": true, "verified": true}, {"eid": "六上-五-2", "uid": "六上-五", "link": "选材围绕中心意思，先定中心再选材料。", "key": true, "verified": false}, {"eid": "六下-一-2", "uid": "六下-一", "link": "要求抓住重点、写出特点。", "key": false, "verified": false}], "crossDomain": [], "verifiedUnits": ["四下-一", "四下-三", "五上-一", "五上-四", "五上-六", "五上-八", "六上-八", "六下-三"]}}, "links": {"一下-三-1": [{"line": "词句理解与品味", "index": 0, "total": 8, "prev": null, "next": "一下-六-1", "link": "理解依据是上下文。"}], "一下-六-1": [{"line": "词句理解与品味", "index": 1, "total": 8, "prev": "一下-三-1", "next": "二上-四-1", "link": "理解依据换成生活经验；与上一条并置，说明依据可选。"}], "二上-四-1": [{"line": "词句理解与品味", "index": 2, "total": 8, "prev": "一下-六-1", "next": "三上-二-1", "link": "两条依据合并使用，对象由词语扩到词句。"}], "三上-二-1": [{"line": "词句理解与品味", "index": 3, "total": 8, "prev": "二上-四-1", "next": "三上-七-1", "link": "要求“运用多种方法”，指名的是方法的选用，而非某一种依据。"}], "三上-七-1": [{"line": "词句理解与品味", "index": 4, "total": 8, "prev": "三上-二-1", "next": "三下-一-1", "link": "指向语言的感受与积累，与理解词句有关但落点在积累。"}], "三下-一-1": [{"line": "词句理解与品味", "index": 5, "total": 8, "prev": "三上-七-1", "next": "三下-六-1", "link": "指向体会语句的生动，本单元重点在想象画面。"}], "三下-六-1": [{"line": "词句理解与品味", "index": 6, "total": 8, "prev": "三下-一-1", "next": "五上-七-1", "link": "对象从词语变为句子。"}], "五上-七-1": [{"line": "词句理解与品味", "index": 7, "total": 8, "prev": "三下-六-1", "next": null, "link": "要求品味语言并记录感受，把感受写下来作为要求的一部分。"}], "一上-七-1": [{"line": "内容与信息把握", "index": 0, "total": 14, "prev": null, "next": "一下-四-2", "link": "定位文中明显的信息，不涉及概括。"}], "一下-四-2": [{"line": "内容与信息把握", "index": 1, "total": 14, "prev": "一上-七-1", "next": "一下-七-1", "link": "同为找出明显信息；本单元另有朗读要求。"}], "一下-七-1": [{"line": "内容与信息把握", "index": 2, "total": 14, "prev": "一下-四-2", "next": "二上-六-1", "link": "在找出信息之后要求作推断，需要连接两处信息。"}], "二上-六-1": [{"line": "内容与信息把握", "index": 3, "total": 14, "prev": "一下-七-1", "next": "二下-六-1", "link": "工具定为相关词句，范围从单点信息扩到课文内容。"}], "二下-六-1": [{"line": "内容与信息把握", "index": 4, "total": 14, "prev": "二上-六-1", "next": "三上-六-1", "link": "提出“主要信息”，需要区分主次。"}], "三上-六-1": [{"line": "内容与信息把握", "index": 5, "total": 14, "prev": "二下-六-1", "next": "三下-三-1", "link": "范围定为一段话，工具定为关键语句。"}], "三下-三-1": [{"line": "内容与信息把握", "index": 6, "total": 14, "prev": "三上-六-1", "next": "四上-六-1", "link": "由理解进到概括，要自己组织语言。"}], "四上-六-1": [{"line": "内容与信息把握", "index": 7, "total": 14, "prev": "三下-三-1", "next": "四上-八-1", "link": "范围从一段话扩到全篇，工具不变。"}], "四上-八-1": [{"line": "内容与信息把握", "index": 8, "total": 14, "prev": "四上-六-1", "next": "四下-六-1", "link": "换成人物＋事件的抓取方式，本单元重点在简要复述。"}], "四下-六-1": [{"line": "内容与信息把握", "index": 9, "total": 14, "prev": "四上-八-1", "next": "五上-八-1", "link": "对象是长文章，要处理的信息量更大。"}], "五上-八-1": [{"line": "内容与信息把握", "index": 10, "total": 14, "prev": "四下-六-1", "next": "五下-六-1", "link": "加入“根据需要”，梳理带有目的性。"}], "五下-六-1": [{"line": "内容与信息把握", "index": 11, "total": 14, "prev": "五上-八-1", "next": "六上-六-1", "link": "工具为人物思维过程，落点在课文内容理解。"}, {"line": "形象与情感理解", "index": 8, "total": 12, "prev": "五下-五-2", "next": "六上-四-1", "link": "思维过程体现人物形象，落点在加深对课文内容的理解。"}], "六上-六-1": [{"line": "内容与信息把握", "index": 12, "total": 14, "prev": "五下-六-1", "next": "六上-七-1", "link": "对象改为“中心意思”，与主要内容不是同一概念。"}], "六上-七-1": [{"line": "内容与信息把握", "index": 13, "total": 14, "prev": "六上-六-1", "next": null, "link": "不指定具体工具，要求综合运用。"}], "四下-一-1": [{"line": "形象与情感理解", "index": 0, "total": 12, "prev": null, "next": "四下-七-1", "link": "体会对象是“思想感情”，抓手是关键语句。"}], "四下-七-1": [{"line": "形象与情感理解", "index": 1, "total": 12, "prev": "四下-一-1", "next": "五上-一-1", "link": "体会对象改为人物品质，抓手是人物描写。"}], "五上-一-1": [{"line": "形象与情感理解", "index": 2, "total": 12, "prev": "四下-七-1", "next": "五上-四-1", "link": "抓手是具体事物，仍写明“初步”。"}], "五上-四-1": [{"line": "形象与情感理解", "index": 3, "total": 12, "prev": "五上-一-1", "next": "五上-六-1", "link": "本单元明确要求结合资料体会思想感情，程度用“深入”。"}, {"line": "资料运用", "index": 5, "total": 13, "prev": "四下-三-3", "next": "五上-五-2", "link": "本单元明确要求结合资料体会思想感情。"}], "五上-六-1": [{"line": "形象与情感理解", "index": 4, "total": 12, "prev": "五上-四-1", "next": "五下-一-1", "link": "抓手是细节描写，情感见于细处。"}], "五下-一-1": [{"line": "形象与情感理解", "index": 5, "total": 12, "prev": "五上-六-1", "next": "五下-四-1", "link": "不再写明抓手，直接要求体会思想感情。"}], "五下-四-1": [{"line": "形象与情感理解", "index": 6, "total": 12, "prev": "五下-一-1", "next": "五下-五-2", "link": "对象是人物内心，抓手是动作、语言、神态描写。"}], "五下-五-2": [{"line": "形象与情感理解", "index": 7, "total": 12, "prev": "五下-四-1", "next": "五下-六-1", "link": "【读写转换】本单元为习作单元，落点在运用描写人物的方法进行具体表达。"}], "六上-四-1": [{"line": "形象与情感理解", "index": 9, "total": 12, "prev": "五下-六-1", "next": "六下-三-1", "link": "对象是小说人物形象，借助情节与环境。"}], "六下-三-1": [{"line": "形象与情感理解", "index": 10, "total": 12, "prev": "六上-四-1", "next": "六下-四-1", "link": "对象是文章怎样表达情感，落点在表达方式。"}], "六下-四-1": [{"line": "形象与情感理解", "index": 11, "total": 12, "prev": "六下-三-1", "next": null, "link": "对象回到人物品质，抓手是外貌、神态、言行描写。"}], "三下-四-2": [{"line": "资料运用", "index": 0, "total": 13, "prev": null, "next": "三下-七-2", "link": "围绕节日主题收集资料；同单元另有写过节情景的要求。"}], "三下-七-2": [{"line": "资料运用", "index": 1, "total": 13, "prev": "三下-四-2", "next": "四上-六-2", "link": "信息整合之后用于介绍一种事物。"}], "四上-六-2": [{"line": "资料运用", "index": 2, "total": 13, "prev": "三下-七-2", "next": "四下-三-2", "link": "为明确的介绍对象收集、整理资料。"}], "四下-三-2": [{"line": "资料运用", "index": 3, "total": 13, "prev": "四上-六-2", "next": "四下-三-3", "link": "写明“根据需要”，收集是有选择的；同时要求初步学习整理方法。"}], "四下-三-3": [{"line": "资料运用", "index": 4, "total": 13, "prev": "四下-三-2", "next": "五上-四-1", "link": "成果呈现环节，资料整理落到可展示的作品上。"}], "五上-五-2": [{"line": "资料运用", "index": 6, "total": 13, "prev": "五上-四-1", "next": "五下-三-2", "link": "资料用于说明性表达，与说明方法结合。"}], "五下-三-2": [{"line": "资料运用", "index": 7, "total": 13, "prev": "五上-五-2", "next": "五下-三-3", "link": "方法被单独提出：学习搜集资料的基本方法。"}], "五下-三-3": [{"line": "资料运用", "index": 8, "total": 13, "prev": "五下-三-2", "next": "六上-八-1", "link": "成果形式为研究报告，与前面的收集、整理形成一组要求。"}], "六上-八-1": [{"line": "资料运用", "index": 9, "total": 13, "prev": "五下-三-3", "next": "六下-四-2", "link": "资料用于理解课文主要内容，写明“借助相关”。"}], "六下-四-2": [{"line": "资料运用", "index": 10, "total": 13, "prev": "六上-八-1", "next": "六下-六-1", "link": "资料用于加深对课文的理解，与同单元人物品质的体会并列。"}], "六下-六-1": [{"line": "资料运用", "index": 11, "total": 13, "prev": "六下-四-2", "next": "六下-六-2", "link": "要求运用学过的方法整理资料。"}], "六下-六-2": [{"line": "资料运用", "index": 12, "total": 13, "prev": "六下-六-1", "next": null, "link": "资料整理与活动策划书结合，落到真实任务的成果。"}], "三上-六-2": [{"line": "表达组织", "index": 0, "total": 7, "prev": null, "next": "四上-五-2", "link": "组织单位为一段话，要求围绕一个意思。"}], "四上-五-2": [{"line": "表达组织", "index": 1, "total": 7, "prev": "三上-六-2", "next": "四下-六-2", "link": "组织单位为一件事，仍以写清楚为目标。"}], "四下-六-2": [{"line": "表达组织", "index": 2, "total": 7, "prev": "四上-五-2", "next": "五上-四-2", "link": "增加“按一定顺序”这一组织手段。"}], "五上-四-2": [{"line": "表达组织", "index": 3, "total": 7, "prev": "四下-六-2", "next": "五上-八-2", "link": "要求落到落笔之前的思路组织（列提纲）。"}], "五上-八-2": [{"line": "表达组织", "index": 4, "total": 7, "prev": "五上-四-2", "next": "六上-五-2", "link": "要求分段表述并突出重点，由表达需要决定。"}], "六上-五-2": [{"line": "表达组织", "index": 5, "total": 7, "prev": "五上-八-2", "next": "六下-一-2", "link": "选材围绕中心意思，先定中心再选材料。"}], "六下-一-2": [{"line": "表达组织", "index": 6, "total": 7, "prev": "六上-五-2", "next": null, "link": "要求抓住重点、写出特点。"}]}, "versions": {"一上": {"state": "低年级·教参来源", "detail": "课本不设导语页，要素取自教师教学用书「单元说明」；教参页码待补"}, "一下": {"state": "低年级·教参来源", "detail": "同上；部分单元经 OCR 交叉验证"}, "二上": {"state": "低年级·教参来源", "detail": "同上"}, "二下": {"state": "低年级·教参来源", "detail": "同上；依据教参前言的全册要素列表"}, "三上": {"state": "已核", "detail": "导语页逐页提取，本机 PDF"}, "三下": {"state": "已核", "detail": "同上"}, "四上": {"state": "已核", "detail": "同上"}, "四下": {"state": "已核·统编旧版", "detail": "经核定为教育部统编语文教材旧版；本轮已核第一、第三单元导语页原文"}, "五上": {"state": "已核", "detail": "本轮已回原 PDF 逐条核对第一、第四、第六、第八单元"}, "五下": {"state": "已核·统编旧版", "detail": "经核定为教育部统编语文教材旧版；全册导语页逐页提取结果已核验"}, "六上": {"state": "已核", "detail": "本轮已回原 PDF 核对第八单元"}, "六下": {"state": "已核·统编旧版", "detail": "经核定为教育部统编语文教材旧版；本轮已回原 PDF 核对第三单元导语页原文"}}, "kbiao": {"第一学段": {"grades": "1～2年级", "print_page": 7, "domains": {"识字与写字": [{"no": 1, "text": "喜欢学习汉字，有主动识字、写字的愿望。认识常用汉字1600个左右，其中800个左右会写。", "page": 7, "short": "喜欢学习汉字，有主动识字、写字的愿望，认识常用汉字1600个左右"}, {"no": 2, "text": "学会汉语拼音。能读准声母、韵母、声调和整体认读音节。能准确地拼读音节，正确书写声母、韵母和音节。认识大写字母，熟记《汉语拼音字母表》。", "page": 7, "short": "掌握汉字基本笔画和常用偏旁部首，按笔顺规则写字，注意间架结构"}, {"no": 3, "text": "掌握汉字的基本笔画和常用的偏旁部首，能按基本的笔顺规则用硬笔写字，注意间架结构，初步感受汉字的形体美。努力养成良好的写字习惯，写字姿势正确，书写规范、端正、整洁。", "page": 7, "short": "学习独立识字，能借助汉语拼音认读汉字，学会用音序检字法和部首检字法查字典"}, {"no": 4, "text": "学习独立识字。能借助汉语拼音认读汉字，学会用音序检字法和部首检字法查字典。", "page": 7, "short": "学习独立识字"}], "阅读与鉴赏": [{"no": 1, "text": "喜欢阅读，感受阅读的乐趣。学习用普通话正确、流利、有感情地朗读课文。学习默读。", "page": 7, "short": "学习用普通话正确、流利、有感情地朗读课文；学习默读"}, {"no": 2, "text": "结合上下文和生活实际了解课文中词句的意思，在阅读中积累词语。认识课文中出现的常用标点符号，在阅读中体会句号、问号、感叹号所表达的不同语气。借助读物中的图画阅读。", "page": 8, "short": "结合上下文和生活实际了解课文中词句的意思，在阅读中积累词语"}, {"no": 3, "text": "阅读浅近的童话、寓言、故事，向往美好的情境，关心自然和生命，对感兴趣的人物和事件有自己的感受和想法，并乐于与他人交流。诵读儿歌、儿童诗和浅近的古诗，展开想象，获得初步的情感体验，感受语言的优美。", "page": 8, "short": "阅读浅近的童话、寓言、故事，向往美好的情境，关心自然和生命"}, {"no": 4, "text": "尝试阅读整本书，用自己喜欢的方式向他人介绍读过的书。养成爱护图书的习惯。", "page": 8, "short": "诵读儿歌、儿童诗和浅近的古诗，展开想象，获得初步的情感体验"}, {"no": 5, "text": "积累自己喜欢的成语和格言警句。背诵优秀诗文50篇(段)。课外阅读总量不少于5万字。", "page": 8, "short": "积累自己喜欢的成语和格言警句"}], "表达与交流": [{"no": 1, "text": "学说普通话，逐步养成说普通话的习惯，有表达交流的自信心。", "page": 8, "short": "学说普通话，逐步养成说普通话的习惯；能认真听别人讲话，努力了解主要内容"}, {"no": 2, "text": "能认真听他人讲话，努力了解讲话的主要内容。听故事、看影视作品，能复述大意和自己感兴趣的情节。能较完整地讲述小故事，能简要讲述自己感兴趣的见闻。与他人交谈，态度自然大方，有礼貌。积极参加讨论，敢于发表自己的意见。", "page": 8, "short": "听故事、看音像作品，能复述大意和精彩情节；能较完整地讲述小故事"}, {"no": 3, "text": "对写话有兴趣，留心周围事物，写自己想说的话，写想象中的事物。在写话中乐于运用阅读和生活中学到的词语。", "page": 8, "short": "与人交谈，态度自然大方，有礼貌；有表达的自信心，积极参加讨论"}, {"no": 4, "text": "根据表达的需要，学习使用逗号、句号、问号、感叹号。", "page": 8, "short": "对写话有兴趣，留心周围事物，写自己想说的话，写想象中的事物"}], "梳理与探究": [{"no": 1, "text": "观察字形，体会汉字部件之间的关系。梳理学过的字，感知汉字与生活的联系。", "page": 8, "short": "观察字形，体会汉字部件之间的关系；梳理学过的字，感知汉字与生活的联系"}, {"no": 2, "text": "观察大自然，热心参加校园、社区活动，积累活动体验。结合语文学习，用口头或图文等方式整理、表达自己在活动中的见闻和想法。", "page": 8, "short": "观察大自然，热心参加校园、社区活动，积累活动体验，整理表达见闻和想法"}, {"no": 3, "text": "对周围事物有好奇心，能就感兴趣的内容提出问题，结合其他学科的学习和生活经验交流讨论，尝试提出自己的看法。", "page": 9, "note": "【学段收束说明】在落实以上要求过程中，注重引导学生关注中华优秀传统文化在日常生活中的表现，初步感受中华优秀传统文化的重要价值；初步懂得幸福生活是革命前辈浴血奋战、艰苦奋斗换来的，激发对革命领袖、革命家、英雄人物的崇敬之情；关注当代社会新面貌，感受当代社会的新变化。（印刷第9页）", "short": "对周围事物有好奇心，能提出问题并交流讨论，尝试提出自己的看法"}]}}, "第二学段": {"grades": "3～4年级", "print_page": 9, "domains": {"识字与写字": [{"no": 1, "text": "对学习汉字有浓厚的兴趣，养成主动识字的习惯。累计认识常用汉字2500个左右，其中1600个左右会写。有初步的独立识字能力。能用音序检字法和部首检字法查字典、词典。", "page": 9, "short": "对学习汉字有浓厚的兴趣，养成主动识字的习惯"}, {"no": 2, "text": "写字姿势正确，养成良好的书写习惯。能用硬笔熟练地书写正楷字，做到规范、端正、整洁。用毛笔临摹正楷字帖，感受汉字的书写特点和形体美。", "page": 9, "short": "写字姿势正确，养成良好的书写习惯"}, {"no": 3, "text": "能感知常用汉字形、音、义之间的联系，初步建立汉字与生活中事物、行为的联系，初步感受汉字的文化内涵。", "page": 9, "short": "能感知常用汉字形、音、义之间的联系，初步建立汉字与生活中事物、行为的联系，初步感受汉字的文化内涵"}], "阅读与鉴赏": [{"no": 1, "text": "用普通话正确、流利、有感情地朗读课文。初步学会默读，做到不出声，不指读。学习略读，粗知文章大意。", "page": 9, "short": "用普通话正确、流利、有感情地朗读课文；初步学会默读，学习略读"}, {"no": 2, "text": "能联系上下文，理解词句的意思，体会课文中关键词句表达情意的作用。能借助字典、词典和生活积累，理解生词的意义。在理解语句的过程中，体会句号与逗号的不同用法，了解冒号、引号的一般用法。", "page": 9, "short": "能联系上下文，理解词句的意思，体会课文中关键词句表达情意的作用"}, {"no": 3, "text": "能初步把握文章的主要内容，体会文章表达的思想感情。学习圈点、批注等阅读方法。能对课文中不理解的地方提出疑问，乐于与他人讨论交流。", "page": 10, "short": "初步把握文章的主要内容，体会文章表达的思想感情；初步感受作品中生动的形象"}, {"no": 4, "text": "能复述叙事性作品的大意，初步感受作品中生动的形象和优美的语言，关心作品中人物的命运和喜怒哀乐，与他人交流自己的阅读感受。诵读优秀诗文，注意在诵读过程中体验情感，展开想象，领悟诗文大意。", "page": 10, "short": "复述叙事性作品的大意，初步感受生动的形象和优美的语言，关心人物命运"}, {"no": 5, "text": "阅读整本书，初步理解主要内容，主动和同学分享自己的阅读感受。", "page": 10, "short": "阅读整本书，初步理解主要内容，主动和同学分享自己的阅读感受"}, {"no": 6, "text": "积累课文中的优美词语、精彩句段，以及在课外阅读和生活中获得的语言材料。背诵优秀诗文50篇(段)。养成读书看报的习惯，收藏图书资料，乐于与同学交流。课外阅读总量不少于40万字。", "page": 10, "short": "积累课文中的优美词语、精彩句段，以及在课外阅读和生活中获得的语言材料"}], "表达与交流": [{"no": 1, "text": "乐于用口头、书面的方式与人交流沟通，愿意与他人分享，增强表达的自信心。", "page": 10, "short": "乐于用口头、书面的方式与人交流沟通，愿意与他人分享，增强表达的自信心"}, {"no": 2, "text": "能用普通话交谈，学会认真倾听，听人说话时能把握主要内容，并能简要转述。能就不理解的地方向人请教，就不同的意见与人商讨。", "page": 10, "short": "能用普通话交谈，学会认真倾听，听人说话时能把握主要内容，并能简要转述"}, {"no": 3, "text": "能清楚明白地讲述见闻，说出自己的感受和想法。讲述故事力求具体生动。能主动参与日常生活中的文化活动，根据不同的场合，尝试运用合适的音量和语气与他人交流，有礼貌地请教、回应。", "page": 10, "short": "能清楚明白地讲述见闻，说出自己的感受和想法"}, {"no": 4, "text": "观察周围世界，能不拘形式地写下自己的见闻、感受和想象，注意把自己觉得新奇有趣或印象最深、最受感动的内容写清楚。能用便条、简短的书信等进行交流。尝试在习作中运用自己平时积累的语言材料，特别是有新鲜感的词句。", "page": 10, "short": "观察周围世界，能不拘形式地写下见闻、感受和想象，把新奇有趣或印象最深的内容写清楚"}, {"no": 5, "text": "学习修改习作中有明显错误的词句。根据表达的需要，正确使用冒号、引号等标点符号。课内习作每学年16次左右。", "page": 11, "short": "学习修改习作中有明显错误的词句"}], "梳理与探究": [{"no": 1, "text": "尝试分类整理学过的字词。尝试发现所学汉字形、音、义和书写的特点，帮助自己识字、写字。", "page": 11, "short": "尝试分类整理学过的字词"}, {"no": 2, "text": "学习组织有趣味的语文实践活动，在活动中学习语文，学会合作。结合语文学习，观察大自然，观察社会，积极思考，运用书面或口头方式，并可尝试用表格、图像、音频等多种媒介，呈现自己的观察与探究所得。", "page": 11, "short": "学习组织有趣味的语文实践活动，在活动中学习语文，学会合作"}, {"no": 3, "text": "能提出学习和生活中的问题，有目的地搜集资料，共同讨论，尝试运用语文并结合其他学科知识解决问题。", "page": 11, "note": "【学段收束说明】在落实以上要求过程中，注重感悟国家通用语言文字的文化内涵……（印刷第11页）", "short": "能提出学习和生活中的问题，有目的地搜集资料，共同讨论，尝试解决问题"}]}}, "第三学段": {"grades": "5～6年级", "print_page": 11, "domains": {"识字与写字": [{"no": 1, "text": "有较强的独立识字能力。累计认识常用汉字3000个左右，其中2500个左右会写。感受汉字的构字组词特点，体会汉字蕴含的智慧。", "page": 11, "short": "有较强的独立识字能力"}, {"no": 2, "text": "写字姿势正确，有良好的书写习惯。硬笔书写楷书，行款整齐，力求美观，有一定的速度。能用毛笔书写楷书，在书写中体会汉字的优美。", "page": 11, "short": "写字姿势正确，有良好的书写习惯"}], "阅读与鉴赏": [{"no": 1, "text": "熟练地用普通话正确、流利、有感情地朗读课文。默读有一定的速度，默读一般读物每分钟不少于300字。学习浏览，扩大知识面，根据需要搜集信息。", "page": 12, "short": "熟练朗读，默读有一定速度，学习浏览，扩大知识面，根据需要搜集信息"}, {"no": 2, "text": "能联系上下文和自己的积累，推想课文中有关词句的意思，辨别词语的感情色彩，体会其表达效果。在理解课文的过程中体会顿号与逗号、分号与句号的不同用法。", "page": 12, "short": "推想词句意思，辨别感情色彩，体会表达效果"}, {"no": 3, "text": "在阅读中了解文章的表达顺序，体会作者的思想感情，初步领悟文章的基本表达方法。在交流和讨论中，敢于提出看法，作出自己的判断。", "page": 12, "short": "了解文章表达顺序，体会作者思想感情，领悟基本表达方法"}, {"no": 4, "text": "阅读叙事性作品，了解事件梗概，能简单描述印象最深的场景、人物、细节，说出自己的喜爱、憎恶、崇敬、向往、同情等感受；阅读诗歌，大体把握诗意，想象诗歌描述的情境，体会作品的情感。受到优秀作品的感染和激励，向往和追求美好的理想。", "page": 12, "short": "阅读叙事性作品了解梗概，简单描述场景人物细节，体会作品情感"}, {"no": 5, "text": "阅读说明性文章，能抓住要点，了解文章的基本说明方法。阅读简单的非连续性文本，能从图文等组合材料中找出有价值的信息。尝试使用多种媒介阅读。", "page": 12, "short": "阅读说明性文章，抓住要点，了解基本的说明方法"}, {"no": 6, "text": "阅读整本书，把握文本的主要内容，积极向同学推荐并说明理由。", "page": 12, "short": "阅读整本书，把握文本的主要内容，积极向同学推荐并说明理由"}, {"no": 7, "text": "背诵优秀诗文60篇(段),注意通过语调、韵律、节奏等体味作品的内容和情感。扩展阅读面，课外阅读总量不少于100万字。", "page": 12, "short": "背诵优秀诗文60篇(段),注意通过语调、韵律、节奏等体味作品的内容和情感"}], "表达与交流": [{"no": 1, "text": "听人说话认真、耐心，能抓住要点，并能简要转述。乐于表达，与人交流能尊重和理解对方。注意语言美，抵制不文明的语言。", "page": 12, "short": "听人说话认真、耐心，能抓住要点，并能简要转述"}, {"no": 2, "text": "表达有条理，语气、语调适当。参与讨论，敢于发表自己的意见，说清自己的观点。能根据对象和场合，稍作准备，作简单的发言。", "page": 12, "short": "表达有条理，语气、语调适当"}, {"no": 3, "text": "懂得写作是为了自我表达和与人交流。养成留心观察周围事物的习惯，有意识地丰富自己的见闻，珍视个人的独特感受，积累习作素材。", "page": 13, "short": "懂得写作是为了自我表达和与人交流"}, {"no": 4, "text": "能写简单的记实作文和想象作文，内容具体，感情真实。能根据内容表达的需要，分段表述。学写读书笔记，学写常见应用文。", "page": 13, "short": "写简单的记实作文和想象作文，内容具体、感情真实；根据需要分段表述"}, {"no": 5, "text": "修改自己的习作，并主动与他人交换修改，做到语句通顺，行款正确，书写规范、整洁。根据表达需要，正确使用常用的标点符号。习作要有一定速度。课内习作每学年16次左右。", "page": 13, "short": "修改习作并主动交换修改，语句通顺，行款正确，书写规范整洁"}], "梳理与探究": [{"no": 1, "text": "分类整理学过的字词，发现所学汉字形、音、义和书写的特点，发展独立识字能力和写字能力。", "page": 13, "short": "分类整理学过的字词，发现所学汉字形、音、义和书写的特点，发展独立识字能力和写字能力"}, {"no": 2, "text": "感受不同媒介的表达效果，学习跨媒介阅读与运用，初步运用多种方法整理和呈现信息。", "page": 13, "short": "感受不同媒介表达效果，跨媒介阅读，初步运用多种方法整理和呈现信息"}, {"no": 3, "text": "初步了解查找资料、运用资料的基本方法。利用图书馆、网络等渠道获取资料，解决与学习和生活相关的问题。尝试写简单的研究报告。", "page": 13, "short": "初步了解查找资料、运用资料的基本方法，解决相关问题，尝试写简单研究报告"}, {"no": 4, "text": "策划简单的校园活动和社会活动，对所策划的主题进行讨论和分析，学写活动计划和活动总结。对自己身边的、大家共同关注的问题，或影视作品中的故事和形象，通过调查访问、讨论演讲等方式，开展专题探究活动，学习辨别是非、善恶、美丑。", "page": 13, "short": "策划简单的校园活动和社会活动，学写活动计划和活动总结", "note": "【学段收束说明】在落实以上要求过程中，注重了解中华优秀传统文化的源远流长、丰富多彩，提升自身中华优秀传统文化修养；感受先贤志士的人格魅力，感悟老一辈无产阶级革命家的英雄气概、优良作风和高尚品质，体会捍卫民族尊严、维护国家利益和世界和平的伟大精神；初步形成对社会主义先进文化的认识。（印刷第13页）"}]}}}, "crossDomainLinks": {"五上-四-1": [["第三学段", "阅读与鉴赏", 3]], "六上-八-1": [["第三学段", "阅读与鉴赏", 3], ["第三学段", "阅读与鉴赏", 1]], "六下-四-2": [["第三学段", "阅读与鉴赏", 3]], "五下-五-2": [["第三学段", "表达与交流", 4]]}, "elementEvidenceMap": {"六上-八-1": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 3, "reason": "【主要依据】在阅读中了解表达顺序、体会思想感情、理解主要内容"}, {"xd": "第三学段", "dom": "阅读与鉴赏", "no": 1, "reason": "【支持依据】学习浏览，根据需要搜集信息、扩大知识面"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【方法依据】初步了解查找资料、运用资料的基本方法"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}, "五上-四-1": {"形象与情感理解": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 4, "reason": "【主要依据】阅读叙事作品与诗歌，大体把握诗意，体会作品的情感"}, {"xd": "第三学段", "dom": "阅读与鉴赏", "no": 3, "reason": "【主要依据】在阅读中体会作者的思想感情"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}]}, "资料运用": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 3, "reason": "【主要依据】直接阅读理解依据：结合资料深入体会作者的思想感情"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【方法依据】初步了解查找资料、运用资料的基本方法"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}, "五上-五-2": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "表达与交流", "no": 4, "reason": "【主要依据】内容具体，感情真实；按表达需要介绍事物"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 2, "reason": "【方法依据】初步运用多种方法整理和呈现信息"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【方法依据】利用图书馆、网络等渠道获取资料"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40", "pdfPage": "43", "text": "能概括说明性文字的主要内容或简单的非连续性文本的关键信息，初步判断内容或信息的合理性；能用准确的语言清楚地介绍、说明事物或程序，运用文本主要信息解决现实生活中的简单问题。", "short": "概括说明性文字关键信息，清楚介绍、说明事物或程序", "scope": "说明性表达与介绍事物"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}, "五下-三-3": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【主要依据】初步了解查找、运用资料的基本方法，尝试写简单的研究报告"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能根据校园、社会活动的需要，自己或与同学合作撰写活动计划、实施方案或活动总结。", "short": "根据活动需要撰写活动计划、实施方案或活动总结", "scope": "综合实践·活动方案与总结"}]}}, "五下-三-2": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【主要依据】初步了解查找资料、运用资料的基本方法"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}], "otherQualities": []}}, "六下-六-2": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "梳理与探究", "no": 4, "reason": "【主要依据】策划简单的校园活动和社会活动，学写活动计划和活动总结"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能根据校园、社会活动的需要，自己或与同学合作撰写活动计划、实施方案或活动总结。", "short": "根据活动需要撰写活动计划、实施方案或活动总结", "scope": "综合实践·活动方案与总结"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}, "六下-六-1": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "梳理与探究", "no": 2, "reason": "【主要依据】初步运用多种方法整理和呈现信息"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 4, "reason": "【主要依据】围绕活动主题开展探究"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能根据校园、社会活动的需要，自己或与同学合作撰写活动计划、实施方案或活动总结。", "short": "根据活动需要撰写活动计划、实施方案或活动总结", "scope": "综合实践·活动方案与总结"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}, "五下-五-2": {"形象与情感理解": {"directTargets": [{"xd": "第三学段", "dom": "表达与交流", "no": 4, "reason": "【读写转换主要依据】习作单元表达要求：能写简单的记实作文，内容具体，感情真实"}, {"xd": "第三学段", "dom": "阅读与鉴赏", "no": 4, "reason": "【阅读基础依据】了解事件梗概，简单描述人物与细节"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "在活动中积累素材，写简单的记实作文，内容具体、感情真实；写想象作文，想象丰富、生动有趣；能写读书笔记、常见应用文。", "short": "积累素材，写简单记实作文与想象作文，内容具体、感情真实", "scope": "表达与交流·记实与想象作文"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}]}}, "五下-六-1": {"内容与信息把握": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 3, "reason": "【主要依据】了解文章的表达顺序，初步领悟基本表达方法，作出判断"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}], "otherQualities": []}, "形象与情感理解": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 4, "reason": "【支持依据】简单描述人物、细节，说出自己的感受"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "40～41", "pdfPage": "43～44", "text": "独立阅读散文、小说、诗歌等文学作品，在阅读过程中能获取主要内容，用朗读、复述等自己擅长的方式呈现对作品内容的理解；能用文字、结构图等方式梳理作品的行文思路；能品味作品中重要的语句和富有表现力的语言，注意词语的感情色彩，通过圈点、批注等多种方法记录自己的阅读感受和体验，并主动与他人分享；能通过诵读、改写、表演等方式，表达自己对感人情境和形象的理解与审美体验；能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。在文学体验活动中涵养健康向上的审美情趣。", "short": "阅读文学作品，获取主要内容，品味语言，表达对情境形象的理解与审美体验", "scope": "文学作品阅读与鉴赏"}], "otherQualities": []}}, "六下-四-2": {"资料运用": {"directTargets": [{"xd": "第三学段", "dom": "阅读与鉴赏", "no": 3, "reason": "【主要依据】借助资料加深对课文思想感情与基本表达方法的理解"}, {"xd": "第三学段", "dom": "梳理与探究", "no": 3, "reason": "【方法依据】查找资料、运用资料的基本方法"}], "directQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "能借助与文本相关的材料，结合作品关键语句评价文本中的主要事件和人物，提出自己的观点或看法；能发现不同类型文本的结构方式和语言特点，感受作品内容、表现形式上的不同，积极向他人推荐，并有条理地说明推荐理由。", "short": "借助与文本相关的材料，结合关键语句评价主要事件和人物", "scope": "文学阅读·借助材料评价"}], "otherQualities": [{"xueduan": "第三学段", "chapter": "五、学业质量 → (二)学业质量描述 → 第三学段", "printPage": "41", "pdfPage": "44", "text": "积极参加跨学科学习活动，能利用多种信息渠道获取资料，在简单的调查、访谈等活动中记录真实生活；能根据活动需要，结合自己的知识积累和生活经验提出要探究、解决的主要问题；能借助跨学科知识和相关材料，与同学合作探索解决问题的具体方法，运用相关知识解释自己的想法，记录探究的过程及结论，写简单的研究报告；能组织讨论和专题演讲，发表自己的观点，在交流反思中辨别是非、善恶和美丑。", "short": "利用多渠道获取资料，合作探索解决问题，写简单的研究报告", "scope": "跨学科活动·获取资料与研究报告"}]}}}};
+
+const U = D.units, L = D.lines, LINKS = D.links;
+
+/* ---------- 通用工具 ---------- */
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function el(eid){
+  const uid = eid.slice(0, eid.lastIndexOf("-"));
+  const u = U[uid]; if(!u) return null;
+  const e = u.elements.find(x=>x.eid===eid);
+  return e ? {u, e, uid} : null;
+}
+const VOL_LIST = ["一上","一下","二上","二下","三上","三下","四上","四下","五上","五下","六上","六下"];
+const CN_NUMS = "一二三四五六七八九十";
+function volOrder(v){return VOL_LIST.indexOf(v);}
+
+function nodeOrderKey(eid){
+  const parts = eid.split("-");
+  const v = parts[0], u = parts[1], seq = parseInt(parts[2]||"1", 10);
+  return volOrder(v) * 1000 + (CN_NUMS.indexOf(u)+1) * 10 + seq;
+}
+
+function getSourceInfo(u, e){
+  if(u.xueduan === 1){
+    return {
+      type: "教参单元说明",
+      badge: "教参单元说明（页码待补）",
+      desc: "课本不设导语页（起始第 "+u.page+" 页）；要素取自教师教学用书「单元说明」（教参页码待补）",
+      bookPageText: "课本起始第 "+u.page+" 页（不设导语页）"
+    };
+  } else {
+    return {
+      type: "教材导语原文",
+      badge: "教材导语原文",
+      desc: "课本第 "+u.page+" 页导语页原文",
+      bookPageText: "课本第 "+u.page+" 页导语页"
+    };
+  }
+}
+
+/* ---------- 第一层：全表 ---------- */
+let filterVol = "全部", scrollY = 0, curEid = null, curPath = 0;
+
+function renderTools(){
+  const vols = ["全部"].concat(Object.keys(D.versions).sort((a,b)=>volOrder(a)-volOrder(b)));
+  let h = '<span style="font-size:12px;color:var(--muted)">按册定位</span>';
+  for(const v of vols){
+    h += '<button class="btn" data-vol="'+v+'" aria-pressed="'+(v===filterVol)+'">'+v+'</button>';
+  }
+  h += '<span class="spacer"></span>';
+  h += '<button class="btn" id="expandAll">展开全部单元</button>';
+  document.getElementById("tools").innerHTML = h;
+  document.querySelectorAll("[data-vol]").forEach(b=>b.addEventListener("click",()=>{
+    filterVol = b.dataset.vol; renderTools(); renderTable();
+  }));
+  document.getElementById("expandAll").addEventListener("click",()=>{
+    document.getElementById("table").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+
+function renderTable(){
+  const vols = Object.keys(D.versions).sort((a,b)=>volOrder(a)-volOrder(b));
+  let h = "";
+  for(const v of vols){
+    if(filterVol !== "全部" && filterVol !== v) continue;
+    const vs = D.versions[v];
+    const us = Object.values(U).filter(u=>u.vol===v).sort((a,b)=>"一二三四五六七八".indexOf(a.unit)-"一二三四五六七八".indexOf(b.unit));
+    const isOk = vs.state && vs.state.includes("已核");
+    h += '<div class="volhead"><b>'+esc(vs.name0||v)+'</b><span>'+us.length+' 个单元</span>'+
+         '<span class="tagv '+(isOk?"ok":"todo")+'">'+esc(vs.state)+'</span>'+
+         '<span>'+esc(vs.detail)+'</span></div><div class="units">';
+    for(const u of us){
+      let n = 0;
+      let els = "";
+      for(const e of u.elements){
+        const lk = LINKS[e.eid] || [];
+        if(lk.length) n++;
+        const badge = lk.length
+          ? lk.map(x=>x.line).join(" · ")
+          : "该要素的关联尚未整理";
+        els += '<button class="el'+(lk.length?" linked":"")+'" data-eid="'+e.eid+'">'+
+               '<span class="no">'+e.seq+'</span>'+esc(e.text)+
+               '<span class="badge'+(lk.length?"":" todo")+'">'+esc(badge)+'</span></button>';
+      }
+      const uTheme = u.theme || u['人文主题'];
+      const srcInfo = getSourceInfo(u);
+      h += '<div class="unit"><h4>第'+u.unit+'单元 <span>'+esc(srcInfo.bookPageText)+'</span>'+
+           (n?'<span class="badge" style="background:#eef4f1;color:#2f5d50;border:1px solid #bcd3ca">已整理 '+n+'/'+u.elements.length+'</span>':'')+
+           '</h4>'+
+           (uTheme ? '<div class="theme">🌿 人文主题：'+esc(uTheme)+'</div>' : '')+
+           els+'</div>';
+    }
+    h += '</div>';
+  }
+  document.getElementById("table").innerHTML = h;
+  document.querySelectorAll("[data-eid]").forEach(b=>b.addEventListener("click",()=>openElement(b.dataset.eid)));
+}
+
+/* ---------- 第二层：脉络图 ---------- */
+function openElement(eid){
+  scrollY = window.scrollY;
+  curEid = eid; curPath = 0;
+  document.getElementById("table").style.display = "none";
+  document.getElementById("detail").style.display = "block";
+  renderDetail();
+  window.scrollTo(0,0);
+}
+function closeDetail(){
+  document.getElementById("detail").style.display = "none";
+  document.getElementById("table").style.display = "block";
+  window.scrollTo(0, scrollY);
+}
+
+function kbCard(xd, dom, no){
+  const items = (D.kbiao[xd] && D.kbiao[xd].domains[dom]) || [];
+  return items.find(x=>x.no===no) || null;
+}
+
+/* ---------- 统一的依据选择逻辑（页面渲染与导出完全共用） ---------- */
+function getElementEvidences(eid, lk){
+  const g = el(eid);
+  if(!g || !lk) return { directTargets: [], otherTargets: [], directQualities: [], otherQualities: [] };
+  const { u, e } = g;
+  const lineName = lk.line;
+  const L2 = L[lineName];
+  const curXdName = ["", "第一学段", "第二学段", "第三学段"][u.xueduan] || "第三学段";
+
+  const directTargets = [];
+  const otherTargets = [];
+  const seenKb = {};
+
+  // 1. 检查 elementEvidenceMap 中是否有专门为该要素配置的目标
+  const elemMap = (D.elementEvidenceMap && D.elementEvidenceMap[eid] && D.elementEvidenceMap[eid][lineName]) || null;
+
+  if(elemMap && elemMap.directTargets && elemMap.directTargets.length > 0){
+    for(const dt of elemMap.directTargets){
+      const k = dt.xd + dt.dom + dt.no;
+      if(seenKb[k]) continue;
+      seenKb[k] = 1;
+      const it = kbCard(dt.xd, dt.dom, dt.no);
+      if(it){
+        directTargets.push({
+          xd: dt.xd,
+          dom: dt.dom,
+          no: dt.no,
+          it: it,
+          desc: dt.reason || lk.line,
+          reason: dt.reason || lk.line,
+          isDirect: true
+        });
+      }
+    }
+  } else {
+    // 默认从脉络中按当前学段划分：只有属于当前学段的条目才加入 directTargets，并登记去重
+    for(const [xd, dom, no] of (L2.kbiao || [])){
+      if(xd === curXdName){
+        const k = xd + dom + no;
+        if(seenKb[k]) continue;
+        seenKb[k] = 1;
+        const it = kbCard(xd, dom, no);
+        if(!it) continue;
+        directTargets.push({
+          xd: xd,
+          dom: dom,
+          no: no,
+          it: it,
+          desc: "【本学段直接目标】" + lk.line,
+          reason: "【本学段直接目标】" + lk.line,
+          isDirect: true
+        });
+      }
+    }
+  }
+
+  // 收集本脉络关联的其他相关目标（未列为直接依据的目标，包括前后学段或同学段其他目标）
+  for(const [xd, dom, no] of (L2.kbiao || [])){
+    const k = xd + dom + no;
+    if(seenKb[k]) continue;
+    seenKb[k] = 1;
+    const it = kbCard(xd, dom, no);
+    if(!it) continue;
+    otherTargets.push({
+      xd: xd,
+      dom: dom,
+      no: no,
+      it: it,
+      desc: "【其他相关目标】" + lk.line,
+      reason: "【其他相关目标】" + lk.line,
+      isDirect: false
+    });
+  }
+
+  // 2. 学业质量逻辑
+  let directQualities = [];
+  let otherQualities = [];
+
+  if(curXdName !== "第三学段"){
+    // 第一、第二学段：不借第三学段作为直接参照，所有 L2.quality 作为后续终结性拓展
+    directQualities = [];
+    otherQualities = (L2.quality || []).slice();
+  } else {
+    // 第三学段
+    if(elemMap && elemMap.directQualities){
+      directQualities = (elemMap.directQualities || []).slice();
+      otherQualities = (elemMap.otherQualities || []).slice();
+    } else {
+      // 非专门配置的第三学段要素
+      if(lineName === "资料运用"){
+        // 资料运用中未专门配置的，不胡乱兜底，标尚未建立对应
+        directQualities = [];
+        otherQualities = [];
+      } else {
+        // 其他脉络（词句理解与品味、内容与信息把握、表达组织、形象与情感理解）
+        directQualities = (L2.quality || []).slice();
+        otherQualities = [];
+      }
+    }
+  }
+
+  return { directTargets, otherTargets, directQualities, otherQualities };
+}
+
+function renderDetail(){
+  const g = el(curEid);
+  if(!g){ document.getElementById("detail").innerHTML = '<div class="empty">未找到该要素</div>'; return; }
+  const {u, e} = g;
+  const links = LINKS[curEid] || [];
+  const vs = D.versions[u.vol] || {};
+  const curXdName = ["", "第一学段", "第二学段", "第三学段"][u.xueduan] || "第三学段";
+  const srcInfo = getSourceInfo(u, e);
+  const uTheme = u.theme || u['人文主题'];
+
+  let h = '<div class="crumb" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">'+
+          '<div><button id="back">← 返回教材全表</button>　'+
+          esc(vs.name0||u.vol)+' 第'+u.unit+'单元　<span style="color:var(--muted)">'+esc(e.eid)+'</span></div>'+
+          '<div><button class="btn p" id="exp">📥 导出当前要素脉络（Markdown）</button></div></div>';
+
+  const lk = links.length ? links[curPath % links.length] : null;
+  const L2 = lk ? L[lk.line] : null;
+  const arr = L2 ? L2.nodes : [];
+  const curNode = arr.find(n => n.eid === curEid);
+  const curLinkNote = links.length
+    ? ((curNode && curNode.link) || lk.link || ("当前单元明确提出：" + e.text))
+    : "该要素的关联尚未整理。此处只呈现原文与来源，不呈现前后脉络。";
+
+  /* --- 当前中心要素卡片 HTML 生成器 --- */
+  function makeCenterCard(linkNoteText, extraClass){
+    return '<div class="center '+(extraClass||'')+'">'+
+           '<div class="ch">'+esc(vs.name0||u.vol)+' 第'+u.unit+'单元　'+esc(srcInfo.bookPageText)+'</div>'+
+           '<div class="ct">'+esc(e.text)+'</div>'+
+           '<div class="cm">'+
+           '<span class="source-tag">'+esc(srcInfo.badge)+'</span>'+
+           '<span class="lbl2 src">'+esc(e.orient)+'</span>'+
+           (uTheme ? '<span class="theme-tag">🌿 单元主题：'+esc(uTheme)+'</span>' : '')+
+           '</div>'+
+           '<div class="cnote"><b>【当前要素关联说明】</b>'+esc(linkNoteText)+'</div>'+
+           '</div>';
+  }
+
+  // 窄屏置顶卡片（首屏可见）
+  h += makeCenterCard(curLinkNote, "center-mobile");
+
+  /* --- 上：课标依据 --- */
+  h += '<div class="kbzone"><h3>相关课标依据 <span style="font-size:12px;color:var(--muted);font-weight:400">（按所属学段精准对应，点击卡片展开完整原文与出处）</span></h3>';
+  if(links.length){
+    const ev = getElementEvidences(curEid, lk);
+
+    // 渲染学段目标 HTML
+    let kbCurH = "";
+    for(const t of ev.directTargets){
+      kbCurH += '<div class="kbitem"><div class="ref">'+t.xd+'　'+t.dom+' 第'+t.no+'条　印刷页 '+t.it.page+
+             '　<span class="lbl jd">'+esc(t.reason)+'</span></div>'+
+             '<div class="short"><i>要点</i>'+esc(t.it.short || t.it.text)+'</div>'+
+             '<div class="full"><div class="row"><span class="lbl src">课标原文</span>'+esc(t.it.text)+'</div>'+
+             (t.it.note ? '<div class="row" style="color:var(--muted);font-size:11px">'+esc(t.it.note)+'</div>' : '')+
+             '<div class="row"><span class="k">来源：'+esc(D.meta.kbiaoSource)+'　'+
+             '印刷页 '+t.it.page+'／PDF页 '+(t.it.page+3)+'</span></div></div></div>';
+    }
+
+    let kbOtherH = "";
+    for(const t of ev.otherTargets){
+      kbOtherH += '<div class="kbitem" style="opacity:0.85;margin-top:6px"><div class="ref">'+t.xd+'　'+t.dom+' 第'+t.no+'条　印刷页 '+t.it.page+
+             '　<span class="lbl jd">'+esc(t.reason)+'</span></div>'+
+             '<div class="short"><i>要点</i>'+esc(t.it.short || t.it.text)+'</div>'+
+             '<div class="full"><div class="row"><span class="lbl src">课标原文</span>'+esc(t.it.text)+'</div>'+
+             (t.it.note ? '<div class="row" style="color:var(--muted);font-size:11px">'+esc(t.it.note)+'</div>' : '')+
+             '<div class="row"><span class="k">来源：'+esc(D.meta.kbiaoSource)+'　'+
+             '印刷页 '+t.it.page+'／PDF页 '+(t.it.page+3)+'</span></div></div></div>';
+    }
+
+    let targetColHtml = kbCurH || '<div class="empty">当前学段（'+curXdName+'）尚未建立直接目标条目。</div>';
+    if(kbOtherH){
+      targetColHtml += '<details style="margin-top:8px;font-size:12px;color:var(--muted);cursor:pointer">'+
+                       '<summary style="padding:4px 0;outline:none">展开本脉络关联的其他相关目标 ('+ev.otherTargets.length+'条)</summary>'+
+                       kbOtherH + '</details>';
+    }
+
+    // 2. 渲染学业质量 HTML
+    let quH = "";
+    if(curXdName !== "第三学段"){
+      quH += '<div class="empty" style="padding:10px 12px;line-height:1.6"><b>本学段（'+curXdName+'）学业质量对应尚未整理</b><br>'+
+             '<span style="font-size:11.5px;color:var(--muted)">课标学业质量描述未分条编号；本表按规范不借用第三学段条文填充。</span></div>';
+      if(ev.otherQualities.length > 0){
+        let nextStageH = "";
+        for(const q of ev.otherQualities){
+          nextStageH += '<div class="kbitem" style="margin-top:6px"><div class="ref">'+esc(q.xueduan)+'（终结表现参照）　印刷页 '+esc(q.printPage)+'（PDF页 '+esc(q.pdfPage)+'）</div>'+
+                        '<div class="short"><i>要点</i>'+esc(q.short)+'</div>'+
+                        '<div class="full"><div class="row"><span class="lbl src">课标原文</span>'+esc(q.text)+'</div>'+
+                        '<div class="row"><span class="k">章节：'+esc(q.chapter)+'　印刷页 '+esc(q.printPage)+'／PDF页 '+esc(q.pdfPage)+'</span></div></div></div>';
+        }
+        quH += '<details style="margin-top:8px;font-size:12px;color:var(--muted);cursor:pointer">'+
+               '<summary style="padding:4px 0;outline:none">查看后续学段（第三学段）终结性参照</summary>'+
+               nextStageH + '</details>';
+      }
+    } else {
+      if(!ev.directQualities.length){
+        quH += '<div class="empty">当前要素学业质量对应尚未单独建立，不自动填充不相关条款。</div>';
+      } else {
+        for(const q of ev.directQualities){
+          quH += '<div class="kbitem"><div class="ref">'+esc(q.xueduan)+'　学业质量描述　印刷页 '+esc(q.printPage)+'（PDF页 '+esc(q.pdfPage)+'）</div>'+
+                 '<div class="short"><i>要点</i>'+esc(q.short)+'</div>'+
+                 '<div class="full"><div class="row"><span class="lbl src">课标原文</span>'+esc(q.text)+'</div>'+
+                 '<div class="row"><span class="k">章节：'+esc(q.chapter)+'　印刷页 '+esc(q.printPage)+'／PDF页 '+esc(q.pdfPage)+'</span></div>'+
+                 '<div class="row"><span class="lbl jd">关联说明</span>与当前要素直接相关，是学段结束时的综合表现参照，不等同于本单元达成要求。</div></div></div>';
+        }
+      }
+      if(ev.otherQualities.length > 0){
+        let otherQH = "";
+        for(const q of ev.otherQualities){
+          otherQH += '<div class="kbitem" style="opacity:0.85;margin-top:6px"><div class="ref">'+esc(q.xueduan)+'（综合拓展）　印刷页 '+esc(q.printPage)+'</div>'+
+                     '<div class="short"><i>要点</i>'+esc(q.short)+'</div>'+
+                     '<div class="full"><div class="row"><span class="lbl src">课标原文</span>'+esc(q.text)+'</div>'+
+                     '<div class="row"><span class="k">章节：'+esc(q.chapter)+'　印刷页 '+esc(q.printPage)+'／PDF页 '+esc(q.pdfPage)+'</span></div></div></div>';
+        }
+        quH += '<details style="margin-top:8px;font-size:12px;color:var(--muted);cursor:pointer">'+
+               '<summary style="padding:4px 0;outline:none">查看本脉络其他综合表现参照 ('+ev.otherQualities.length+'条)</summary>'+
+               otherQH + '</details>';
+      }
+    }
+
+    h += '<div class="kbcol"><div><div class="sideh">学段目标（'+curXdName+'）</div>'+targetColHtml+'</div>'+
+         '<div><div class="sideh">学业质量（'+curXdName+'综合表现参照）</div>'+quH+'</div></div>';
+  } else {
+    h += '<div class="empty">该要素的关联尚未整理，暂不呈现课标依据。</div>';
+  }
+  h += '</div>';
+
+  /* --- 中：三栏脉络与节点 --- */
+  if(!links.length){
+    h += '<div class="board"><div class="side pre-side"><div class="sideh">此前相关教材要素</div><div class="empty">—</div></div>'+
+         makeCenterCard(curLinkNote, "center-desktop")+
+         '<div class="side post-side"><div class="sideh">此后相关教材要素</div><div class="empty">—</div></div></div>'+
+         '<div class="legend">未整理的要素不连线，也不按单元编号推测关联。</div>';
+  } else {
+    // 严格按真实教材时间划分此前、同单元、此后！
+    const curOrder = nodeOrderKey(curEid);
+    const pre = [], post = [], sameUnit = [];
+    for(const n of arr){
+      if(n.eid === curEid) continue;
+      const nOrder = nodeOrderKey(n.eid);
+      const nUid = n.eid.slice(0, n.eid.lastIndexOf("-"));
+      if(nUid === g.uid){
+        sameUnit.push(n);
+      } else if(nOrder < curOrder){
+        pre.push(n);
+      } else {
+        post.push(n);
+      }
+    }
+
+    h += '<div class="pathtabs"><span style="font-size:12.5px;color:var(--muted)">关联路径</span>';
+    links.forEach((x,i)=>{
+      h += '<button class="btn" data-path="'+i+'" aria-pressed="'+(i===(curPath%links.length))+'">'+
+           x.line+'（'+x.total+' 个节点）</button>';
+    });
+    h += '</div>';
+    h += '<div class="pathnote">当前突出：<b>'+lk.line+'</b>　这条线上第 '+(lk.index+1)+'/'+lk.total+' 个节点。'+
+         (links.length>1 ? '　本要素同时关联 '+links.length+' 条路径，它们各自排列，不合并成一条阶梯。' : '')+
+         '　下面每一侧默认显示 2 个代表性节点。</div>';
+
+    // 宽屏三栏布局
+    h += '<div class="board">';
+    h += '<div class="side pre-side"><div class="sideh">此前相关教材要素</div>'+sideNodes(pre, "pre")+'</div>';
+    h += makeCenterCard(curLinkNote, "center-desktop");
+    h += '<div class="side post-side"><div class="sideh">此后相关教材要素</div>';
+    if(sameUnit.length > 0){
+      h += '<div class="same-unit-box"><b>同单元相关：</b>'+sameUnit.map(su=>{
+        const g2 = el(su.eid);
+        return (g2?esc(g2.e.text):su.eid)+' <span style="font-size:11px;color:var(--accent2)">（同单元不同要素，非此前/此后）</span>';
+      }).join("<br>")+'</div>';
+    }
+    h += sideNodes(post, "post")+'</div>';
+    h += '</div>';
+    h += '<div class="legend"><span class="lbl2 src">教材原文</span>节点标题与展开后的原文来自教材导语页；'+
+         '<span class="lbl2 jd">关联说明</span>是本表的教研判断，不是教材或课标的官方对应表。'+
+         '每侧默认 2 个代表性节点，其余点「展开其余相关节点」查看；'+
+         '<b>当前已整理范围</b>：'+lk.line+' 共 '+lk.total+' 个节点。</div>';
+  }
+  document.getElementById("detail").innerHTML = h;
+
+  const b = document.getElementById("back"); if(b) b.addEventListener("click", closeDetail);
+  const ex = document.getElementById("exp"); if(ex) ex.addEventListener("click", exportElement);
+  document.querySelectorAll("[data-path]").forEach(x=>x.addEventListener("click",()=>{
+    curPath = parseInt(x.dataset.path,10); renderDetail();
+  }));
+  document.querySelectorAll(".kbitem").forEach(x=>x.addEventListener("click",()=>x.classList.toggle("open")));
+  document.querySelectorAll("[data-node]").forEach(x=>x.addEventListener("click",ev=>{
+    ev.stopPropagation(); x.classList.toggle("open");
+  }));
+  document.querySelectorAll("[data-more]").forEach(x=>x.addEventListener("click",()=>{
+    x.parentElement.querySelectorAll("[data-hidden]").forEach(y=>{
+      y.style.display = "block";
+      y.removeAttribute("data-hidden");
+    });
+    x.remove();
+  }));
+}
+
+function sideNodes(list, kind){
+  if(!list.length) return '<div class="empty">本侧暂无可列节点。</div>';
+  let keys = list.filter(n=>n.key);
+  if(!keys.length) keys = (kind === "pre") ? list.slice(-2) : list.slice(0,2);
+  else keys = (kind === "pre") ? keys.slice(-2) : keys.slice(0,2);
+  const showSet = new Set(keys.map(n=>n.eid));
+  let h = "";
+  list.forEach((n,i)=>{
+    const g2 = el(n.eid); if(!g2) return;
+    const u2 = g2.u;
+    const vs2 = D.versions[u2.vol] || {};
+    const src2 = getSourceInfo(u2, g2.e);
+    const hidden = !showSet.has(n.eid);
+    const lk0 = (D.links[n.eid]||[])[0];
+    h += '<div class="node" data-node '+(hidden?'data-hidden style="display:none"':'')+'>'+
+         '<div class="nh"><b>'+esc(vs2.name0||u2.vol)+' 第'+u2.unit+'单元</b><span>'+esc(src2.bookPageText)+'</span>'+
+         (n.key?'<span class="lbl2" style="background:#eef4f1;color:#2f5d50;border-color:#bcd3ca">代表性</span>':'')+
+         '</div>'+
+         '<div class="sum"><i>概括</i>'+esc(n.link)+'</div>'+
+         '<div class="full">'+
+         '<div class="row"><span class="lbl src">'+esc(src2.badge)+'</span>'+esc(g2.e.text)+'</div>'+
+         '<div class="row"><span class="k">来源说明：'+esc(src2.desc)+'　要素编号 '+esc(n.eid)+'</span></div>'+
+         '<div class="row"><span class="lbl jd">关联说明</span>'+esc(n.link)+'</div>'+
+         (n.verified
+            ? '<div class="row"><span class="lbl2 src">已回教材原页核对</span></div>'
+            : '<div class="row"><span class="lbl2 todo">沿用早前逐页提取结果</span></div>')+
+         (lk0 && lk0.line !== curLineName()
+            ? '<div class="row"><span class="k">该要素还关联：'+esc(lk0.line)+'</span></div>' : '')+
+         '</div></div>';
+  });
+  const nHidden = list.length - showSet.size;
+  if(nHidden > 0){
+    h += '<button class="more" data-more>展开其余相关节点（还有 '+nHidden+' 个）</button>';
+  }
+  return h;
+}
+
+function curLineName(){
+  const g = el(curEid); if(!g) return "";
+  const lks = LINKS[curEid]||[];
+  return lks.length ? lks[curPath % lks.length].line : "";
+}
+
+/* ---------- 导出 Markdown ---------- */
+function exportElement(){
+  const g = el(curEid); if(!g) return;
+  const {u,e} = g, links = LINKS[curEid]||[];
+  const vs = D.versions[u.vol]||{};
+  const curXdName = ["", "第一学段", "第二学段", "第三学段"][u.xueduan] || "第三学段";
+  const srcInfo = getSourceInfo(u, e);
+  const uTheme = u.theme || u['人文主题'];
+
+  // 严格按册别已登记来源定性版本，绝不替未核定册别一刀切旧版
+  let versionDesc = "";
+  if(vs.state && vs.state.includes("统编旧版")){
+    versionDesc = "教育部统编语文教材（旧版已确认；" + vs.detail + "）";
+  } else if(vs.state && vs.state.includes("教参来源")){
+    versionDesc = "教育部统编语文教材（低年级·教参说明；" + vs.detail + "）";
+  } else {
+    versionDesc = "教育部统编语文教材（导语页逐页提取；" + vs.detail + "）";
+  }
+
+  const o = [
+    "# 单元要素脉络 · "+(vs.name0||u.vol)+" 第"+u.unit+"单元", "",
+    "## 教材版本与出处说明",
+    "- **所属册别与单元**："+(vs.name0||u.vol)+" 第"+u.unit+"单元",
+    "- **教材版本定性**："+versionDesc,
+    "- **来源类型**："+srcInfo.badge+"（"+srcInfo.desc+"）",
+    "- **要素标识**：`"+e.eid+"`",
+    "- **取向标注**："+e.orient+"（"+e.orientNote+"）",
+    "- **所属学段**："+curXdName,
+    (uTheme ? "- **单元人文主题**："+uTheme : "- **单元人文主题**：教参未设明确主题"),
+    "",
+    "## 当前要素（教材/教参原文）", "",
+    "> " + e.text, ""
+  ];
+
+  if(!links.length){
+    o.push("## 关联状态", "", "该要素的关联尚未整理。此处只呈现原文与来源，不呈现前后脉络。", "");
+  } else {
+    for(const lk of links){
+      const L2 = L[lk.line], arr = L2.nodes;
+      const curNode = arr.find(n => n.eid === curEid);
+      const curOrder = nodeOrderKey(curEid);
+      const pre = [], post = [], sameUnit = [];
+      for(const n of arr){
+        if(n.eid === curEid) continue;
+        const nOrder = nodeOrderKey(n.eid);
+        const nUid = n.eid.slice(0, n.eid.lastIndexOf("-"));
+        if(nUid === g.uid){ sameUnit.push(n); }
+        else if(nOrder < curOrder){ pre.push(n); }
+        else { post.push(n); }
+      }
+
+      o.push("## 关联路径："+lk.line, "",
+             "- **当前要素关联说明**："+((curNode && curNode.link) || lk.link || "当前单元明确要求：" + e.text),
+             "- 本要素是这条脉络第 "+(lk.index+1)+"/"+lk.total+" 个节点。",
+             "- 该路径已整理范围："+lk.total+" 个节点（局部试验脉络，非完整教材链条）。", "");
+
+      const dump = (title, list) => {
+        o.push("### "+title, "");
+        if(!list.length){ o.push("（本侧暂无可列节点）",""); return; }
+        for(const n of list){
+          const g2 = el(n.eid); if(!g2) continue;
+          const v2 = D.versions[g2.u.vol]||{};
+          const s2 = getSourceInfo(g2.u, g2.e);
+          let v2State = v2.state ? (v2.state.includes("统编旧版") ? "统编旧版（经用户核定）" : v2.state) : "版本待核";
+          o.push("- **"+(v2.name0||g2.u.vol)+" 第"+g2.u.unit+"单元**（"+s2.bookPageText+"）"+(n.key?"　［代表性节点］":""),
+                 "  - 原文："+g2.e.text,
+                 "  - 来源："+s2.badge,
+                 "  - 版本定性："+v2State,
+                 "  - 关联说明（教研判断）："+n.link,
+                 "  - 核验状态："+(n.verified ? "已回原件核对" : "沿用早前提取结果"));
+        }
+        o.push("");
+      };
+
+      dump("此前相关教材要素（按教材先后排列）", pre);
+      if(sameUnit.length > 0){
+        o.push("### 同单元相关要素（非前后阶梯）", "");
+        for(const n of sameUnit){
+          const g2 = el(n.eid); if(!g2) continue;
+          o.push("- **同单元要素** `"+n.eid+"`："+g2.e.text+"（"+n.link+"）");
+        }
+        o.push("");
+      }
+      dump("此后相关教材要素（按教材先后排列）", post);
+    }
+
+    o.push("## 课标依据（学段目标）", "");
+    for(const lk of links){
+      o.push("### 关联路径："+lk.line+" · 学段目标依据", "");
+      const ev = getElementEvidences(curEid, lk);
+      if(ev.directTargets.length > 0){
+        o.push("#### 直接相关依据（"+curXdName+"）", "");
+        for(const t of ev.directTargets){
+          o.push("- **"+t.xd+"　"+t.dom+" 第"+t.no+"条**（印刷第 "+t.it.page+" 页／PDF第 "+(t.it.page+3)+" 页）",
+                 "  - **关联性质**："+t.reason,
+                 "  - **课标原文**："+t.it.text,
+                 (t.it.note ? "  - **附注**："+t.it.note : ""),
+                 "");
+        }
+      }
+      if(ev.otherTargets.length > 0){
+        o.push("#### 其他相关目标参照", "");
+        for(const t of ev.otherTargets){
+          o.push("- **"+t.xd+"　"+t.dom+" 第"+t.no+"条**（印刷第 "+t.it.page+" 页／PDF第 "+(t.it.page+3)+" 页）",
+                 "  - **关联性质**："+t.reason,
+                 "  - **课标原文**："+t.it.text,
+                 (t.it.note ? "  - **附注**："+t.it.note : ""),
+                 "");
+        }
+      }
+    }
+
+    o.push("## 学业质量参照（学段结束时的综合表现参照）", "");
+    if(curXdName !== "第三学段"){
+      o.push("> **说明**：当前要素所属"+curXdName+"的学业质量对应尚未单独整理。按规范不借用第三学段条文填充。", "");
+      o.push("### 后续学段（第三学段）终结表现参照", "");
+      for(const lk of links){
+        const ev = getElementEvidences(curEid, lk);
+        for(const q of ev.otherQualities){
+          o.push("- **"+q.xueduan+" · 学业质量描述**（印刷第 "+q.printPage+" 页／PDF第 "+q.pdfPage+" 页）",
+                 "  - **课标原文**："+q.text,
+                 "  - **所属章节**："+q.chapter,
+                 "  - **要点**："+q.short,
+                 "  - **说明**：学段结束时的综合表现参照，不等同于当前单元达成要求。", "");
+        }
+      }
+    } else {
+      for(const lk of links){
+        o.push("### 关联路径："+lk.line+" · 学业质量表现参照", "");
+        const ev = getElementEvidences(curEid, lk);
+        if(!ev.directQualities.length){
+          o.push("（当前要素学业质量对应尚未单独建立，不自动填充不相关条款）", "");
+        } else {
+          o.push("#### 直接表现参照", "");
+          for(const q of ev.directQualities){
+            o.push("- **"+q.xueduan+" · 学业质量描述**（印刷第 "+q.printPage+" 页／PDF第 "+q.pdfPage+" 页）",
+                   "  - **课标原文**："+q.text,
+                   "  - **所属章节**："+q.chapter,
+                   "  - **要点**："+q.short,
+                   "  - **性质**：学段结束时的综合表现参照，不等同于本单元达标要求。", "");
+          }
+        }
+        if(ev.otherQualities.length > 0){
+          o.push("#### 综合拓展表现参照", "");
+          for(const q of ev.otherQualities){
+            o.push("- **"+q.xueduan+" · 学业质量描述**（印刷第 "+q.printPage+" 页／PDF第 "+q.pdfPage+" 页）",
+                   "  - **课标原文**："+q.text,
+                   "  - **所属章节**："+q.chapter,
+                   "  - **要点**："+q.short,
+                   "");
+          }
+        }
+      }
+    }
+  }
+
+  o.push("---","",
+    "## 查阅说明与版本附注",
+    "> 1. **课标依据来源**：《义务教育语文课程标准（2022年版）》（注：参考日常修订可搜索版，印刷页码=PDF页码-3）。",
+    "> 2. **教材版本依据**：三至六年级按教育部统编语文教材导语页，一二年级按教师教学用书「单元说明」。四下、五下、六下经核定确认为统编教材旧版，其余册别按各自登记信息呈现，未替用户作未核定确认。",
+    "> 3. **关联性质说明**：课标原文、教材原文、关联解释已分别标注。关联解释是教研判断，不是官方逐项对应表。",
+    "> 4. **排列顺序说明**：排列顺序说明教材编排次序，不表示能力发展的先后阶梯。");
+
+  const blob = new Blob([o.join(String.fromCharCode(10))], {type:"text/markdown;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "要素脉络_"+curEid+".md";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+
+/* ---------- 启动 ---------- */
+for(const k in D.versions){ D.versions[k].name0 = FULL[k]; }
+document.getElementById("sub").innerHTML =
+  "点击任意一条单元要素，查看它的课标依据与此前／此后相关要素。<br>" +
+  "全表 94 个单元；已整理关联的要素标出脉络名，未整理的标「该要素的关联尚未整理」，不推测关联。";
+document.getElementById("foot").innerHTML =
+  esc(D.meta.kbiaoNote) + "<br>" + esc(D.meta.qualityNote) + "<br>" +
+  esc(D.meta.verifyNote) + "<br>" + esc(D.meta.scopeNote);
+renderTools(); renderTable();
+</script>
+</body>
+</html>
