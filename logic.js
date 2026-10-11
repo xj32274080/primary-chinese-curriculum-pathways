@@ -21,6 +21,8 @@ function el(eid){
 }
 const VOL_LIST = ["一上","一下","二上","二下","三上","三下","四上","四下","五上","五下","六上","六下"];
 const CN_NUMS = "一二三四五六七八九十";
+// 节点较多的共享能力线作为浏览索引，避免把同线误读成逐项强关联。
+const WIDE_INDEX_THRESHOLD = 14;
 function volOrder(v){return VOL_LIST.indexOf(v);}
 
 function nodeOrderKey(eid){
@@ -503,6 +505,20 @@ function sideColumnHTML(list, kind, viewedLineSet){
   return h;
 }
 
+function widePathIndexHTML(g, lk, viewedLineSet){
+  const parts=splitNodes(L[lk.line].nodes,g.uid,g.e.eid);
+  const current=L[lk.line].nodes.find(n=>n.eid===g.e.eid);
+  const note=currentLinkNote(g.e,lk,current);
+  return '<section class="wide-path-index">'+
+    '<p class="wide-index-note">“'+esc(lk.line)+'”是宽口径索引，共'+lk.total+'项；同线不表示每项都与当前要素高度相关。</p>'+
+    (note?'<details class="wide-current-note"><summary class="details-summary">查看当前要素的脉络说明</summary><div class="details-body">'+esc(note)+'</div></details>':'')+
+    '<details class="wide-index-details"><summary class="details-summary">展开完整索引（此前 '+parts.pre.length+' 项 · 此后 '+parts.post.length+' 项）</summary>'+
+    '<div class="wide-index-board">'+
+    '<div class="side pre-side"><div class="sideh">此前教材要素<span class="side-count">'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre,"pre",viewedLineSet)+'</div>'+
+    '<div class="side post-side"><div class="sideh">此后教材要素<span class="side-count">'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post,"post",viewedLineSet)+'</div>'+
+    '</div>'+pathNoteHTML(lk.line)+'</details></section>';
+}
+
 /* ---- 课标依据区（学段目标 / 学业质量参照） ---- */
 function kbItemHTML(t, opts){
   const o = opts || {};
@@ -595,11 +611,43 @@ function themePanelHTML(u){
     '<h4>同主题单元（主题表述与语文要素分别查看）</h4>'+relatedHTML+'</section>';
 }
 
+function focusedRelationHTML(g, cfg){
+  const broad = (LINKS[g.e.eid]||[]).find(item=>item.line===cfg.broadLine);
+  const viewedLineSet = new Set(cfg.broadLine?[cfg.broadLine]:[]);
+  const cards = items=>items.map(item=>nodeCardHTML({eid:item.eid,link:item.reason},false,viewedLineSet)).join("");
+  const core = (cfg.core||[]).slice().sort((a,b)=>nodeOrderKey(b.eid)-nodeOrderKey(a.eid));
+  let h = '<section class="focus-relations">'+
+    '<div class="focus-heading"><h3>同类习作线索 · '+esc(cfg.title)+'</h3><span>按任务特征归类，不表示先修或进阶</span></div>'+
+    '<p class="focus-boundary">'+esc(cfg.boundary)+'</p>'+
+    '<div class="focus-grid">'+
+    '<div class="focus-prior"><h4>此前·同类任务 <span>由近到远 · '+core.length+'条</span></h4>'+cards(core)+'</div>'+
+    '<div class="focus-current">'+makeCenterCard(g,"","center-desktop")+'</div>';
+
+  const candidates = cfg.versionCandidates||[];
+  h += '<div class="focus-edition"><h4>同题材条目 <span>版次待核</span></h4>'+cards(candidates)+
+       '<p class="focus-small-note">不作为已确认的后续学习要求。</p></div></div>';
+
+  const support = cfg.support||[];
+  if(support.length){
+    h += '<details class="focus-fold"><summary class="details-summary">可迁移的表达支撑（'+support.length+'项；不计入同类主线）</summary>'+cards(support)+'</details>';
+  }
+  if(broad){
+    const parts = splitNodes(L[broad.line].nodes,g.uid,g.e.eid);
+    h += '<details class="focus-fold focus-index"><summary class="details-summary">查看“'+esc(broad.line)+'”完整索引（'+broad.total+'条；不表示每项都与本单元高度相关）</summary>'+
+      '<div class="board" data-line="'+esc(broad.line)+'">'+
+      '<div class="side pre-side"><div class="sideh">此前相关教材要素<span class="side-count">'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre,"pre",viewedLineSet)+'</div>'+
+      '<div class="side" style="justify-content:center">'+makeCenterCard(g,"","center-desktop")+'</div>'+
+      '<div class="side post-side"><div class="sideh">此后相关教材要素<span class="side-count">'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post,"post",viewedLineSet)+'</div></div>'+pathNoteHTML(broad.line)+'</details>';
+  }
+  return h+'</section>';
+}
+
 function renderDetail(){
   const g = el(curEid);
   if(!g){ document.getElementById("detail").innerHTML = '<div class="empty">未找到该要素</div>'; return; }
   const {u, e} = g;
   const links = LINKS[curEid] || [];
+  const focusCfg = (D.focusRelations||{})[curEid];
   const vs = D.versions[u.vol] || {};
   const curXdName = ["", "第一学段", "第二学段", "第三学段"][u.xueduan] || "第三学段";
   let h = '<div class="crumb">'+
@@ -612,7 +660,7 @@ function renderDetail(){
           '<button class="exp-item" data-exp="png">保存图片（PNG 概览）</button>'+
           '<button class="exp-item" data-exp="pdf">打印／另存为 PDF（完整脉络）</button>'+
           '<button class="exp-item" data-exp="md">导出 Markdown</button>'+
-          '<div class="exp-hint">简洁脉络图按路径分组，完整列出前后要素；PDF 包含完整脉络与出处。打印时选横向、关闭「页眉和页脚」，目标选「另存为 PDF」。</div>'+
+          '<div class="exp-hint">简洁脉络图突出已整理的相关要素；PDF 包含完整脉络与出处。打印时选横向、关闭「页眉和页脚」，目标选「另存为 PDF」。</div>'+
           '</div></div></div>';
 
   const viewLinks = viewLinksOf();
@@ -621,7 +669,7 @@ function renderDetail(){
 
   // 各路径的当前节点说明（供中心卡片在单路径视图使用）
   let centerNote = "";
-  if(links.length === 1){
+  if(links.length === 1 && !focusCfg && links[0].total < WIDE_INDEX_THRESHOLD){
     const L2 = L[links[0].line];
     const cn = L2.nodes.find(n=>n.eid===curEid);
     centerNote = currentLinkNote(e, links[0], cn);
@@ -680,13 +728,15 @@ function renderDetail(){
     h += '<div class="board"><div class="side pre-side"><div class="sideh">此前相关教材要素</div><div class="empty">当前版本暂无已整理的此前节点。</div></div>'+
          makeCenterCard(g, "", "center-desktop")+
          '<div class="side post-side"><div class="sideh">此后相关教材要素</div><div class="empty">当前版本暂无已整理的此后节点。</div></div></div>';
+  } else if(focusCfg){
+    h += focusedRelationHTML(g,focusCfg);
   } else {
     // 路径切换
-    h += '<div class="pathtabs"><span style="font-size:12.5px;color:var(--muted)">关联路径</span>';
+    h += '<div class="pathtabs"><span style="font-size:12.5px;color:var(--muted)">'+(links.some(x=>x.total>=WIDE_INDEX_THRESHOLD)?'关联脉络／宽索引':'关联路径')+'</span>';
     h += '<button class="btn" data-view="all" aria-pressed="'+(curView==="all")+'">全部路径（'+links.length+'条）</button>';
     links.forEach((x,i)=>{
       h += '<button class="btn" data-view="'+i+'" aria-pressed="'+(String(curView)===String(i))+'">'+
-           x.line+'（'+x.total+' 个节点）</button>';
+           x.line+(x.total>=WIDE_INDEX_THRESHOLD?' · 宽索引':'')+'（'+x.total+' 项）</button>';
     });
     h += '</div>';
     // 逐路径分组
@@ -695,13 +745,16 @@ function renderDetail(){
       const lk = viewLinks[0];
       const arr = L[lk.line].nodes;
       const parts = splitNodes(arr, g.uid, curEid);
-      h += '<div class="board">';
-      h += '<div class="side pre-side"><div class="sideh">此前相关教材要素<span class="side-count">显示'+shownCount(parts.pre)+'项，共'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre, "pre", viewedLineSet)+'</div>';
-      const cn = arr.find(n=>n.eid===curEid);
-      h += makeCenterCard(g, currentLinkNote(e, lk, cn), "center-desktop");
-      h += '<div class="side post-side"><div class="sideh">此后相关教材要素<span class="side-count">显示'+shownCount(parts.post)+'项，共'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post, "post", viewedLineSet)+'</div>';
-      h += '</div>';
-      h += pathNoteHTML(lk.line);
+      if(lk.total>=WIDE_INDEX_THRESHOLD){
+        h += makeCenterCard(g,"","center-desktop")+widePathIndexHTML(g,lk,viewedLineSet);
+      } else {
+        h += '<div class="board">';
+        h += '<div class="side pre-side"><div class="sideh">此前相关教材要素<span class="side-count">显示'+shownCount(parts.pre)+'项，共'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre, "pre", viewedLineSet)+'</div>';
+        const cn = arr.find(n=>n.eid===curEid);
+        h += makeCenterCard(g, currentLinkNote(e, lk, cn), "center-desktop");
+        h += '<div class="side post-side"><div class="sideh">此后相关教材要素<span class="side-count">显示'+shownCount(parts.post)+'项，共'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post, "post", viewedLineSet)+'</div>';
+        h += '</div>'+pathNoteHTML(lk.line);
+      }
       for(const n of parts.sameUnit) if(!sameUnitAll.has(n.eid)) sameUnitAll.set(n.eid, {n, lines:[lk.line]});
     } else {
       // 全部路径：中心卡片只出现一次（宽屏），各路径成组
@@ -711,16 +764,17 @@ function renderDetail(){
         const parts = splitNodes(arr, g.uid, curEid);
         const cn = arr.find(n=>n.eid===curEid);
         const note = currentLinkNote(e, lk, cn);
-        h += '<div class="board" data-line="'+esc(lk.line)+'">'+
+        if(lk.total>=WIDE_INDEX_THRESHOLD){
+          h += widePathIndexHTML(g,lk,viewedLineSet);
+        } else h += '<div class="board" data-line="'+esc(lk.line)+'">'+
              '<div class="side pre-side"><div class="sideh">'+esc(lk.line)+' · 此前相关<span class="side-count">显示'+shownCount(parts.pre)+'项，共'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre, "pre", viewedLineSet)+'</div>'+
              '<div class="side" style="justify-content:center">'+
              '<div class="same-unit-box" style="text-align:center"><b>当前要素 · '+esc(lk.line)+'</b><br>'+
              '<span style="font-size:11.5px">这条线上第 '+(lk.index+1)+'/'+lk.total+' 个节点</span>'+
              (note?'<div class="su-note" style="text-align:left;margin-top:5px">关联概括：'+esc(note)+'</div>':'')+
-             '</div></div>'+
+              '</div></div>'+
               '<div class="side post-side"><div class="sideh">'+esc(lk.line)+' · 此后相关<span class="side-count">显示'+shownCount(parts.post)+'项，共'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post, "post", viewedLineSet)+'</div>'+ 
-              '</div>';
-         h += pathNoteHTML(lk.line);
+              '</div>'+pathNoteHTML(lk.line);
          for(const n of parts.sameUnit) if(!sameUnitAll.has(n.eid)) sameUnitAll.set(n.eid, {n, lines:[lk.line]});
       }
     }
@@ -1331,24 +1385,31 @@ function rr(ctx, x, y, w, h, r){
 /* ================= 导出：简洁脉络图（仅课标与教材要素） ================= */
 function exportMindmapPNG(){
   const g=el(curEid); if(!g) return;
-  const {u,e}=g, links=viewLinksOf(), ev=mergeEvidences(curEid,links);
+  const {u,e}=g, links=viewLinksOf(), ev=mergeEvidences(curEid,links), focusCfg=(D.focusRelations||{})[curEid];
   const targets=ev.directTargets.map(t=>({label:t.dom+" 第"+t.no+"条",text:t.it.text}));
   const qualities=ev.directQualities.map(q=>({label:q.xueduan+" 学业质量",text:q.text}));
-  const paths=links.map(lk=>{
-    const parts=splitNodes(L[lk.line].nodes,g.uid,curEid);
-    const compactUnitLabel=(unit)=>{
-      const unitNo=CN_NUMS.indexOf(String(unit.unit))+1;
-      return unit.vol+(unitNo>0?unitNo:unit.unit);
-    };
-    const compactItems=(list,kind)=>{
-      const ordered=list.slice().sort((a,b)=>kind==="pre"?nodeOrderKey(b.eid)-nodeOrderKey(a.eid):nodeOrderKey(a.eid)-nodeOrderKey(b.eid));
-      return ordered.map(n=>{
-        const item=el(n.eid); if(!item) return null;
-        return {label:compactUnitLabel(item.u),text:item.e.text};
-      }).filter(Boolean);
-    };
-    return {name:lk.line,pre:compactItems(parts.pre,"pre"),post:compactItems(parts.post,"post")};
-  });
+  const compactUnitLabel=(unit)=>{
+    const unitNo=CN_NUMS.indexOf(String(unit.unit))+1;
+    return unit.vol+(unitNo>0?unitNo:unit.unit);
+  };
+  const focusItems=items=>items.slice().sort((a,b)=>nodeOrderKey(b.eid)-nodeOrderKey(a.eid)).map(item=>{
+    const related=el(item.eid); if(!related) return null;
+    return {label:compactUnitLabel(related.u),text:related.e.text};
+  }).filter(Boolean);
+  const paths=focusCfg
+    ? [{name:focusCfg.title,pre:focusItems(focusCfg.core||[]),post:[]}]
+    : links.map(lk=>{
+      const parts=splitNodes(L[lk.line].nodes,g.uid,curEid);
+      const isWide=lk.total>=WIDE_INDEX_THRESHOLD;
+      const compactItems=(list,kind)=>{
+        const ordered=list.slice().sort((a,b)=>kind==="pre"?nodeOrderKey(b.eid)-nodeOrderKey(a.eid):nodeOrderKey(a.eid)-nodeOrderKey(b.eid));
+        return (isWide?ordered.slice(0,2):ordered).map(n=>{
+          const item=el(n.eid); if(!item) return null;
+          return {label:compactUnitLabel(item.u),text:item.e.text};
+        }).filter(Boolean);
+      };
+      return {name:isWide?lk.line+"（宽索引·"+lk.total+"项）":lk.line,isWide,pre:compactItems(parts.pre,"pre"),post:compactItems(parts.post,"post")};
+    });
 
   const W=3000,M=80,contentW=W-2*M,columnGap=40,columnPad=24,columnW=(contentW-columnPad*2-columnGap)/2;
   const leftX=M+columnPad,rightX=leftX+columnW+columnGap;
@@ -1409,8 +1470,8 @@ function exportMindmapPNG(){
   const currentY=standardCols.length?stdGroupTitleY+stdHeight+48:140;
   const currentLines=wrap(e.text,contentW-64,F_CURRENT),currentHeight=72+currentLines.length*46;
   const pathsY=currentY+currentHeight+36;
-  const pathRows=paths.map(path=>({path,preHeight:listHeight(path.pre,columnW),postHeight:listHeight(path.post,columnW)}))
-    .map(row=>({...row,height:88+Math.max(row.preHeight,row.postHeight)}));
+  const pathRows=paths.map(path=>({path,preHeight:listHeight(path.pre,focusCfg?contentW-48:columnW),postHeight:focusCfg?0:listHeight(path.post,columnW)}))
+    .map(row=>({...row,height:focusCfg?88+row.preHeight:88+Math.max(row.preHeight,row.postHeight)}));
   const canvasHeight=pathRows.length?pathsY+pathRows.reduce((sum,row)=>sum+row.height+20,0)+M:pathsY+M;
   canvas.width=W;canvas.height=Math.ceil(canvasHeight);
   ctx.textBaseline="top";ctx.fillStyle=C_BG;ctx.fillRect(0,0,W,canvas.height);
@@ -1436,12 +1497,17 @@ function exportMindmapPNG(){
     ctx.fillStyle=C_ACCENT;ctx.font=F_HEAD;ctx.fillText(row.path.name,M+24,pathY+14);
     const headY=pathY+54,nodesY=pathY+84;
     ctx.fillStyle=C_MUTED;ctx.font=F_LABEL;
-    ctx.fillText("此前相关（由近及远）",leftX,headY);
-    ctx.fillText("此后相关（由近及远）",rightX,headY);
-    ctx.strokeStyle=C_BORDER;ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(leftX+columnW+columnGap/2,pathY+48);ctx.lineTo(leftX+columnW+columnGap/2,pathY+row.height-16);ctx.stroke();
-    drawList(row.path.pre,leftX,nodesY,columnW);
-    drawList(row.path.post,rightX,nodesY,columnW);
+    if(focusCfg){
+      ctx.fillText("此前·同类任务（由近到远）",leftX,headY);
+      drawList(row.path.pre,leftX,nodesY,contentW-48);
+    } else {
+      ctx.fillText(row.path.isWide?"此前近邻（由近到远）":"此前相关（由近及远）",leftX,headY);
+      ctx.fillText(row.path.isWide?"此后近邻（由近到远）":"此后相关（由近及远）",rightX,headY);
+      ctx.strokeStyle=C_BORDER;ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(leftX+columnW+columnGap/2,pathY+48);ctx.lineTo(leftX+columnW+columnGap/2,pathY+row.height-16);ctx.stroke();
+      drawList(row.path.pre,leftX,nodesY,columnW);
+      drawList(row.path.post,rightX,nodesY,columnW);
+    }
     pathY+=row.height+20;
   }
 

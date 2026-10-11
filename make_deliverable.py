@@ -30,6 +30,23 @@ def main():
     unknown_links = sorted(set(data.get('links', {})) - element_ids)
     if unknown_links:
         raise ValueError(f'Links refer to unknown elements: {unknown_links[:5]}')
+    focus_relations = data.get('focusRelations', {})
+    for target_eid, config in focus_relations.items():
+        if target_eid not in element_ids or not config.get('title') or not config.get('broadLine') or not config.get('boundary'):
+            raise ValueError(f'Invalid focused relation target/config: {target_eid}')
+        if config['broadLine'] not in {item['line'] for item in data.get('links', {}).get(target_eid, [])}:
+            raise ValueError(f'Focused relation broad line is not linked to target: {target_eid}')
+        seen_focus_ids = set()
+        for group in ('core', 'support', 'versionCandidates'):
+            for item in config.get(group, []):
+                eid = item.get('eid')
+                if eid not in element_ids or eid == target_eid or not item.get('reason'):
+                    raise ValueError(f'Invalid focused relation item: {target_eid}/{group}/{eid}')
+                if eid in seen_focus_ids:
+                    raise ValueError(f'Duplicate focused relation item: {target_eid}/{eid}')
+                seen_focus_ids.add(eid)
+    if focus_relations:
+        print(f'Validated focused relation records: {len(focus_relations)} targets, {sum(len(x.get("core", [])) for x in focus_relations.values())} core items')
     comparison = data.get('strategyComparison')
     if comparison:
         elements = {e['eid']: e for u in data['units'].values() for e in u['elements']}
