@@ -248,7 +248,7 @@ details[open] > .details-summary,.details-toggle[aria-expanded="true"]{backgroun
 .wide-index-note{margin:0 0 7px;color:var(--muted);font-size:12px;line-height:1.55}
 .wide-current-note{margin-bottom:8px}
 .wide-index-details{padding-top:2px}
-.wide-index-board{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.wide-index-board{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,1.05fr) minmax(0,1fr);gap:12px;margin-top:10px;align-items:start}
 .wide-index-board .side{min-width:0}
 .foot{font-size:11.5px;color:var(--muted);margin-top:26px;line-height:1.8;
   border-top:1px solid var(--bd);padding-top:12px}

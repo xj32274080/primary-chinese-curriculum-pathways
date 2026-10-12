@@ -255,7 +255,7 @@ details[open] > .details-summary,.details-toggle[aria-expanded="true"]{backgroun
 .wide-index-note{margin:0 0 7px;color:var(--muted);font-size:12px;line-height:1.55}
 .wide-current-note{margin-bottom:8px}
 .wide-index-details{padding-top:2px}
-.wide-index-board{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.wide-index-board{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,1.05fr) minmax(0,1fr);gap:12px;margin-top:10px;align-items:start}
 .wide-index-board .side{min-width:0}
 .foot{font-size:11.5px;color:var(--muted);margin-top:26px;line-height:1.8;
   border-top:1px solid var(--bd);padding-top:12px}
@@ -882,15 +882,16 @@ function nodeCardHTML(n, hidden, viewedLineSet){
          '</div>';
 }
 
-/* ---- 一侧栏：代表节点规则沿用（key 优先；无 key 时 pre 取末2 / post 取前2） ---- */
+/* ---- 一侧栏：此前倒序、此后正序；先展示离当前最近的节点 ---- */
 function sideColumnHTML(list, kind, viewedLineSet){
   if(!list.length) return '<div class="empty">本侧暂无可列节点。</div>';
-  let keys = list.filter(n=>n.key);
-  if(!keys.length) keys = (kind === "pre") ? list.slice(-2) : list.slice(0,2);
-  else keys = (kind === "pre") ? keys.slice(-2) : keys.slice(0,2);
+  const ordered = list.slice().sort((a,b)=>kind === "pre"
+    ? nodeOrderKey(b.eid)-nodeOrderKey(a.eid)
+    : nodeOrderKey(a.eid)-nodeOrderKey(b.eid));
+  const keys = ordered.slice(0,2);
   const showSet = new Set(keys.map(n=>n.eid));
   let h = "";
-  for(const n of list){
+  for(const n of ordered){
     h += nodeCardHTML(n, !showSet.has(n.eid), viewedLineSet);
   }
   const nHidden = list.length - showSet.size;
@@ -900,15 +901,19 @@ function sideColumnHTML(list, kind, viewedLineSet){
   return h;
 }
 
-function widePathIndexHTML(g, lk, viewedLineSet){
+function widePathIndexHTML(g, lk, viewedLineSet, showCenterCard){
   const parts=splitNodes(L[lk.line].nodes,g.uid,g.e.eid);
   const current=L[lk.line].nodes.find(n=>n.eid===g.e.eid);
   const note=currentLinkNote(g.e,lk,current);
+  const center = showCenterCard
+    ? makeCenterCard(g,note,"center-desktop")
+    : '<div class="side wide-current-column"><div class="same-unit-box" style="text-align:center"><b>当前要素 · '+esc(lk.line)+'</b><br><span style="font-size:11.5px">这条线上第 '+(lk.index+1)+'/'+lk.total+' 个节点</span>'+
+      (note?'<div class="su-note" style="text-align:left;margin-top:5px">'+esc(note)+'</div>':'')+'</div></div>';
   return '<section class="wide-path-index">'+
-    '<p class="wide-index-note">“'+esc(lk.line)+'”是宽口径索引，共'+lk.total+'项。先显示此前、此后各至多 2 个代表节点；同线不表示每项都与当前要素高度相关。</p>'+
-    (note?'<details class="wide-current-note"><summary class="details-summary">查看当前要素的脉络说明</summary><div class="details-body">'+esc(note)+'</div></details>':'')+
+    '<p class="wide-index-note">“'+esc(lk.line)+'”共'+lk.total+'项：左侧此前由近及远，右侧此后由近及远；每侧先列最近的至多 2 项。同线不表示每项都与当前要素高度相关。</p>'+
     '<div class="wide-index-board">'+
     '<div class="side pre-side"><div class="sideh">此前教材要素<span class="side-count">'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre,"pre",viewedLineSet)+'</div>'+
+    center+
     '<div class="side post-side"><div class="sideh">此后教材要素<span class="side-count">'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post,"post",viewedLineSet)+'</div>'+
     '</div>'+
     '<details class="wide-index-details"><summary class="details-summary">查看这条宽口径脉络的整理说明</summary>'+pathNoteHTML(lk.line)+'</details></section>';
@@ -1141,7 +1146,7 @@ function renderDetail(){
       const arr = L[lk.line].nodes;
       const parts = splitNodes(arr, g.uid, curEid);
       if(lk.total>=WIDE_INDEX_THRESHOLD){
-        h += makeCenterCard(g,"","center-desktop")+widePathIndexHTML(g,lk,viewedLineSet);
+        h += widePathIndexHTML(g,lk,viewedLineSet,true);
       } else {
         h += '<div class="board">';
         h += '<div class="side pre-side"><div class="sideh">此前相关教材要素<span class="side-count">显示'+shownCount(parts.pre)+'项，共'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre, "pre", viewedLineSet)+'</div>';
@@ -1160,7 +1165,7 @@ function renderDetail(){
         const cn = arr.find(n=>n.eid===curEid);
         const note = currentLinkNote(e, lk, cn);
         if(lk.total>=WIDE_INDEX_THRESHOLD){
-          h += widePathIndexHTML(g,lk,viewedLineSet);
+          h += widePathIndexHTML(g,lk,viewedLineSet,false);
         } else h += '<div class="board" data-line="'+esc(lk.line)+'">'+
              '<div class="side pre-side"><div class="sideh">'+esc(lk.line)+' · 此前相关<span class="side-count">显示'+shownCount(parts.pre)+'项，共'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre, "pre", viewedLineSet)+'</div>'+
              '<div class="side" style="justify-content:center">'+
