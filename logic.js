@@ -510,13 +510,13 @@ function widePathIndexHTML(g, lk, viewedLineSet){
   const current=L[lk.line].nodes.find(n=>n.eid===g.e.eid);
   const note=currentLinkNote(g.e,lk,current);
   return '<section class="wide-path-index">'+
-    '<p class="wide-index-note">“'+esc(lk.line)+'”是宽口径索引，共'+lk.total+'项；同线不表示每项都与当前要素高度相关。</p>'+
+    '<p class="wide-index-note">“'+esc(lk.line)+'”是宽口径索引，共'+lk.total+'项。先显示此前、此后各至多 2 个代表节点；同线不表示每项都与当前要素高度相关。</p>'+
     (note?'<details class="wide-current-note"><summary class="details-summary">查看当前要素的脉络说明</summary><div class="details-body">'+esc(note)+'</div></details>':'')+
-    '<details class="wide-index-details"><summary class="details-summary">展开完整索引（此前 '+parts.pre.length+' 项 · 此后 '+parts.post.length+' 项）</summary>'+
     '<div class="wide-index-board">'+
     '<div class="side pre-side"><div class="sideh">此前教材要素<span class="side-count">'+parts.pre.length+'项</span></div>'+sideColumnHTML(parts.pre,"pre",viewedLineSet)+'</div>'+
     '<div class="side post-side"><div class="sideh">此后教材要素<span class="side-count">'+parts.post.length+'项</span></div>'+sideColumnHTML(parts.post,"post",viewedLineSet)+'</div>'+
-    '</div>'+pathNoteHTML(lk.line)+'</details></section>';
+    '</div>'+
+    '<details class="wide-index-details"><summary class="details-summary">查看这条宽口径脉络的整理说明</summary>'+pathNoteHTML(lk.line)+'</details></section>';
 }
 
 /* ---- 课标依据区（学段目标 / 学业质量参照） ---- */
